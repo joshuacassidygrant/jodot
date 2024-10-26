@@ -8,7 +8,6 @@ using System.Reflection;
 using Colony.Scripts.Model.GameModel;
 using Colony.Scripts.Model.Core;
 using Colony.Scripts.Infra;
-using Jodot.Injection;
 
 
 public partial class ServiceDirectory : Node, IServiceContext
@@ -24,7 +23,7 @@ public partial class ServiceDirectory : Node, IServiceContext
 
 	private List<IInjectSubject> _queuedInjectSubjects = new();
 
-	partial void SetupContentServices();
+	public virtual void SetupContentServices() {}
 
 	public void SetupFrameworkServices() {
 
