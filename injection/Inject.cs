@@ -1,4 +1,4 @@
-namespace Jodot.Attributes.Injection;
+namespace Jodot.Injection;
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class Inject: System.Attribute {

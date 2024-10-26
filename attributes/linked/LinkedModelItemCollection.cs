@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using Colony.Scripts.Infra;
 using Colony.Scripts.Model.Core;
+using Jodot.Injection;
+
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public abstract class LinkedModelItemCollectionBase : Attribute {

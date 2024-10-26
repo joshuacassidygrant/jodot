@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using Colony.Scripts.Infra;
 using Godot;
+using Jodot.Injection;
+
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public abstract class LinkedResourceCollectionBase: System.Attribute {
