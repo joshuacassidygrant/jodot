@@ -1,7 +1,7 @@
 namespace Jodot.Injection;
 
 using System;
-using Colony.Scripts.Model.GameModel;
+using Jodot.Model;
 
 public interface IServiceContext {
     public void InjectDependencies(Object o);

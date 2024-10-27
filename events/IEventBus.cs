@@ -1,6 +1,7 @@
 using Colony.Scripts.Infra;
 using Colony.Scripts.Model.GameModel;
 using Godot;
+using Jodot.Model;
 
 public interface IEventBus {
     public void ConnectTo(string name, Callable call);

@@ -2,10 +2,9 @@ namespace Jodot.Events;
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Colony.Scripts.Infra;
-using Colony.Scripts.Model.GameModel;
 using Godot;
+using Jodot.Model;
 
 
 public partial class Events : Node, IEventBus
