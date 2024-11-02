@@ -3,7 +3,8 @@ namespace Jodot.Serialization;
 using Godot;
 using Colony.Scripts.Model.Core;
 using Jodot.Injection;
-using Jodot.Model;
+using Jodot.Events;
+
 
 public partial class SaverLoader: IInjectSubject
 {

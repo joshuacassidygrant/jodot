@@ -2,8 +2,6 @@ namespace Jodot.Attributes.Properties;
 
 using Godot;
 using Jodot.Attributes.Serialization;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 [System.AttributeUsage(System.AttributeTargets.Field)]

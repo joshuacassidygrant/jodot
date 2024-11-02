@@ -1,4 +1,4 @@
-namespace Colony.Scripts.Infra;
+namespace Jodot.Events; 
 
 public interface IModelItemUpdateListener {
     public void Update();

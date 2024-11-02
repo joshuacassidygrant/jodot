@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Colony.Scripts.Model.GameModel;
 using Colony.Scripts.Model.Core;
-using Colony.Scripts.Infra;
 using Jodot.Model;
-
+using Jodot.Rendering;
+using Jodot.Events;
 
 public partial class ServiceDirectory : Node, IServiceContext
 {
@@ -26,7 +25,7 @@ public partial class ServiceDirectory : Node, IServiceContext
 
 	public virtual void SetupContentServices() {}
 
-	public void SetupFrameworkServices() {
+	public virtual void SetupFrameworkServices() {
 
 		Events events = new();
 		GetTree().Root.CallDeferred("add_child", events);
@@ -96,7 +95,7 @@ public partial class ServiceDirectory : Node, IServiceContext
             return;
 		}
 		Type t = o.GetType();
-		FieldInfo[] injectFields = t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+		FieldInfo[] injectFields = t.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttributes(typeof(Inject), false).Any()).ToArray();
 		foreach (FieldInfo fieldInfo in injectFields) {
 			object[] atts = fieldInfo.GetCustomAttributes(typeof(Inject), false);

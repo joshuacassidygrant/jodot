@@ -1,6 +1,4 @@
 namespace Jodot.Attributes.Linked;
-using System;
-
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class LinkedResource: System.Attribute
 {

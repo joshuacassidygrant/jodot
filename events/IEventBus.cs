@@ -1,5 +1,5 @@
-using Colony.Scripts.Infra;
-using Colony.Scripts.Model.GameModel;
+namespace Jodot.Events;
+
 using Godot;
 using Jodot.Model;
 

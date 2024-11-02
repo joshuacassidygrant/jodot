@@ -44,7 +44,7 @@ public partial class Model: IActionSource
 		BindListeners();
 	}
 
-	public void AddModelItem(ModelItem item) {
+	public ModelItem AddModelItem(ModelItem item) {
 		if (NextModelItemPointer >= ModelItems.Length) {
 			Array.Resize(ref ModelItems, ModelItems.Length + DATA_ARRAY_SIZE_INCREMENT);
 		}
@@ -63,6 +63,7 @@ public partial class Model: IActionSource
 		}*/
 
 		/*item.OnCreated();*/
+		return item;
 	}
 
 	public void AddImportedModelItem(ModelItem item) {
@@ -71,7 +72,7 @@ public partial class Model: IActionSource
 		ModelItemsByType[(int)item.ModelItemType].Add(item);
 	}
 
-	public void AddModelItemComponent(ModelItemComponent component) {
+	public ModelItemComponent AddModelItemComponent(ModelItemComponent component) {
 		if (NextModelItemComponentPointer >= ModelItemComponents.Length) {
 			Array.Resize(ref ModelItemComponents, ModelItemComponents.Length + DATA_ARRAY_SIZE_INCREMENT);
 		}
@@ -80,6 +81,7 @@ public partial class Model: IActionSource
 		ModelItemComponents[NextModelItemComponentPointer] = component;
 		ModelComponentsByType[(int)component.ModelComponentType].Add(component);
 		NextModelItemComponentPointer++;
+		return component;
 	}
 
 	public void AddImportedModelItemComponent(ModelItemComponent component) {
