@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Colony.Scripts.Model.Core;
 using Jodot.Model;
 using Jodot.Rendering;
 using Jodot.Events;
@@ -16,7 +15,7 @@ public partial class ServiceDirectory : Node, IServiceContext
 	[Injectable("ModelRunner")] public ModelRunner ModelRunner;
 	[Injectable("ModelRendererContainer")] public ModelRendererContainer ModelRendererContainer;
 	
-	public Model Model => ModelRunner.GameModel;
+	public Model Model => ModelRunner.Model;
 
 
 	private Dictionary<string, FieldInfo> _injectableFields;

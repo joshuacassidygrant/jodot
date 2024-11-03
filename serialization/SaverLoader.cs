@@ -9,7 +9,7 @@ using Jodot.Events;
 public partial class SaverLoader: IInjectSubject
 {
 	[Inject("Events")] private IEventBus _events;
-	[Inject("ModelRunner")] private ModelRunner _modelRunner;
+	[Inject("ModelRunner")] private GameModelRunner _modelRunner;
 
 	public void SaveModel(string fileName) {
 		if (!IsLegalFileName(fileName)) return;
