@@ -8,19 +8,18 @@ using Jodot.Events;
 
 public partial class ModelRendererContainer : Node3D
 {
-	public Dictionary<ModelItem, ModelItemRenderer> Renderers = new Dictionary<ModelItem, ModelItemRenderer>();
+	public Dictionary<int, ModelItemRenderer> Renderers = new Dictionary<int, ModelItemRenderer>();
 
 	[Inject("Events")] public IEventBus _events;
 
-	public ModelItemRenderer AddRenderer(ModelItem item)
-	{
-		if (item == null) return null;
-		ModelItemRenderer renderer = new ModelItemRenderer();
+	public ModelItemRenderer AddRenderer(int modelItemIndex, Model model) {
+		ModelItemRenderer renderer = new();
 		AddChild(renderer);
 		renderer.Visible = true;
-		renderer.BindModelItem(item, GenerateComponent, _events);
-		Renderers.Add(item, renderer);
+		renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model);
+		Renderers.Add(modelItemIndex, renderer);
 		return renderer;
+		
 	}
 
 	public virtual ComponentRenderer GenerateComponent(int type) {
@@ -37,17 +36,18 @@ public partial class ModelRendererContainer : Node3D
 			}
 		}
 
-		Renderers = new Dictionary<ModelItem, ModelItemRenderer>();
+		Renderers = new Dictionary<int, ModelItemRenderer>();
 	}
 
 	public void GenerateRenderers(Model model)
 	{
-		foreach (ModelItem item in model.ModelItems)
+		// TODO: use comopnents
+		/*foreach (ModelItem item in model.ModelItems)
 		{
 			if (item != null)
 			{
 				AddRenderer(item);
 			}
-		}
+		}*/
 	}
 }

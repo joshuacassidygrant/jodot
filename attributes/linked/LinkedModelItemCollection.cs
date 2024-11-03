@@ -27,9 +27,9 @@ public class LinkedModelItemCollection<C, T>: LinkedModelItemCollectionBase
         List<int> indices = (List<int>)GetFieldOfName(o, IndicesField).GetValue(o);
         C collection = new();
 
-        foreach (int i in indices) {
+        /*foreach (int i in indices) {
             collection.Add(s.Model.GetModelItemOrNull<T>(i));
-        }
+        }*/
         field.SetValue(o, collection);
         
     }

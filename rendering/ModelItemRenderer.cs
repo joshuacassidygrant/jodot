@@ -5,10 +5,12 @@ using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Rendering;
 using Jodot.Events;
+using Colony.Scripts.Model.GameModel;
 
 public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener
 {
-	public ModelItem ModelItem;
+	public int BoundModelItemIndex;
+	public Model BoundModel;
 	public Vector3 NextPosition;
 	public Vector3 LastPosition;
 	public Area3D Collider;
@@ -26,28 +28,30 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 
 	}
 
-	public void BindModelItem(ModelItem item, Func<int, ComponentRenderer> generateComponent, IEventBus events)
+	public void BindModelItem(int index, Func<int, ComponentRenderer> generateComponent, IEventBus events, Model m)
 	{
-		ModelItem = item;
- 
-		events.WatchModelItem(item.ModelIndex, this);
 
- 		ILocationProvider locationProvider = ModelItem?.Components.OfType<ILocationProvider>().FirstOrDefault();
+		events.WatchModelItem(index, this);
+
+ 		ILocationProvider locationProvider = (ILocationProvider)m.GetComponentOfTypeBoundToItem((int)ModelComponentType.LOCATEABLE, index);
+		BoundModelItemIndex = index;
+		BoundModel = m;
 		if (locationProvider != null) {
 			events.WatchModelComponent(locationProvider.GetComponentIndex, this);
+			Position = locationProvider.GetPosition();
 		}
 
-		foreach (ModelItemComponent component in item.Components.OfType<IRenderableComponent>()) {
+		foreach (ModelItemComponent component in m.GetComponentsBoundToItem(index, (c) => c is IRenderableComponent)) {
 			ComponentRenderer componentRenderer = generateComponent(component.ModelComponentType);
 			AddChild(componentRenderer);
 			componentRenderer.BindComponent(component, events);
 		}
-		Name = $"{item.ModelIndex} : {item.ModelItemType}";
+		Name = $"{index}";
 	}
 
 	public virtual void Update()
 	{
- 		ILocationProvider locationProvider = ModelItem?.Components.OfType<ILocationProvider>().FirstOrDefault();
+ 		ILocationProvider locationProvider = (ILocationProvider)BoundModel.GetComponentOfTypeBoundToItem((int)ModelComponentType.LOCATEABLE, BoundModelItemIndex);
 		if (locationProvider != null)
 		{
 			Position = locationProvider.GetPosition();
