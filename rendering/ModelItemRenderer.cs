@@ -1,9 +1,11 @@
 using Godot;
 using System;
+using System.Linq;
 using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Rendering;
 using Jodot.Events;
+using Colony.Scripts.Model.GameModel;
 
 public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener
 {
@@ -28,7 +30,7 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 
 	public void BindModelItem(int index, Func<int, ComponentRenderer> generateComponent, IEventBus events, Model m)
 	{
-
+ 
 		events.WatchModelItem(index, this);
 
  		ILocationProvider locationProvider = (ILocationProvider)m.GetComponentOfTypeBoundToItem((int)ModelComponentType.LOCATEABLE, index);
@@ -40,6 +42,7 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 		}
 
 		foreach (ModelItemComponent component in m.GetComponentsBoundToItem(index, (c) => c is IRenderableComponent)) {
+
 			ComponentRenderer componentRenderer = generateComponent(component.ModelComponentType);
 			AddChild(componentRenderer);
 			componentRenderer.BindComponent(component, events);
