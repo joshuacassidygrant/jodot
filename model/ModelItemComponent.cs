@@ -13,7 +13,6 @@ public partial class ModelItemComponent
 	public virtual int[] RequiredComponents => []; // TODO: something with this
 
 	public int ComponentIndex = -1;
-	public ModelItem ModelItem;
 	public int ModelItemIndex = -1;
 	public Model Model;
 
@@ -37,15 +36,8 @@ public partial class ModelItemComponent
         return null;
     }
 
-	public virtual void Link(ModelItem modelItem, Model model) {
+	public virtual void Link(int modelItemIndex, Model model) {
 	}
-
-	public virtual void Bind(ModelItem modelItem, Model model) {
-		ModelItem = modelItem;
-		ModelItemIndex = modelItem.ModelIndex;
-		// model.AddModelItemComponent(this);
-	}
-
 	
 	public virtual void OnPhaseEnd() {
 
@@ -64,7 +56,7 @@ public partial class ModelItemComponent
 	}
 
 	public virtual bool IsActive() {
-		return ModelItem != null && ModelItem.Status == ModelItemStatus.ACTIVE;
+		return true; // TODO
 	}
 
 	public virtual Godot.Collections.Dictionary<string, Variant> ExportData() {

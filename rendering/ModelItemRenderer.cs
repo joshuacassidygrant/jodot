@@ -1,11 +1,9 @@
 using Godot;
 using System;
-using System.Linq;
 using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Rendering;
 using Jodot.Events;
-using Colony.Scripts.Model.GameModel;
 
 public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener
 {

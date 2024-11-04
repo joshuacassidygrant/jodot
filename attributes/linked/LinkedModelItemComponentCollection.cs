@@ -7,19 +7,19 @@ using Jodot.Injection;
 using Jodot.Model;
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
-public abstract class LinkedModelItemCollectionBase : Attribute {
+public abstract class LinkedModelItemComponentCollectionBase : Attribute {
     public abstract void LinkTo(object o, IServiceContext s, FieldInfo field);
 }
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
-public class LinkedModelItemCollection<C, T>: LinkedModelItemCollectionBase
+public class LinkedModelItemComponentCollection<C, T>: LinkedModelItemComponentCollectionBase
     where C : System.Collections.IList, new()
-    where T: ModelItem
+    where T: ModelItemComponent
 {
     public string IndicesField;
 
 
-    public LinkedModelItemCollection(string indicesField) {
+    public LinkedModelItemComponentCollection(string indicesField) {
         IndicesField = indicesField;
     }
 
@@ -27,9 +27,9 @@ public class LinkedModelItemCollection<C, T>: LinkedModelItemCollectionBase
         List<int> indices = (List<int>)GetFieldOfName(o, IndicesField).GetValue(o);
         C collection = new();
 
-        /*foreach (int i in indices) {
-            collection.Add(s.Model.GetModelItemOrNull<T>(i));
-        }*/
+        foreach (int i in indices) {
+            collection.Add(s.Model.GetModelItemComponentOrNull<T>(i));
+        }
         field.SetValue(o, collection);
         
     }

@@ -4,7 +4,6 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Colony.Scripts.Model.Core;
 using Jodot.Injection;
 
 
@@ -94,6 +93,15 @@ public partial class Model: IActionSource
 
 		return ModelItemComponents[ComponentsByItem[itemIndex][componentType]];
 	}
+
+	public ModelItemComponent[] GetComponentsBoundToItem(int itemIndex, System.Type type) {
+		Func<ModelItemComponent, bool> predicate = (c) => type.IsInstanceOfType(c);
+		return ComponentsByItem[itemIndex]
+			.Where(i => i != 0)
+			.Select(i => ModelItemComponents[i])
+			.Where(predicate).ToArray();
+	}
+
 
 	public ModelItemComponent[] GetComponentsBoundToItem(int itemIndex, Func<ModelItemComponent, bool> predicate = null) {
 		if (predicate == null) {
