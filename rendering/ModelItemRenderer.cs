@@ -41,9 +41,9 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 			Position = locationProvider.GetPosition();
 		}
 
-		foreach (ModelItemComponent component in m.GetComponentsBoundToItem(index, (c) => c is IRenderableComponent)) {
+		foreach (Component component in m.GetComponentsBoundToItem(index, (c) => c is IRenderableComponent)) {
 
-			ComponentRenderer componentRenderer = generateComponent(component.ModelComponentType);
+			ComponentRenderer componentRenderer = generateComponent(component.ComponentType);
 			AddChild(componentRenderer);
 			componentRenderer.BindComponent(component, events);
 		}

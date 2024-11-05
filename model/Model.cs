@@ -11,10 +11,10 @@ public partial class Model: IActionSource
 {
 	public virtual IModelInfo Info => null;
 	public const int DATA_ARRAY_SIZE_INCREMENT = 32;
-	public ModelItemComponent[] ModelItemComponents = new ModelItemComponent[DATA_ARRAY_SIZE_INCREMENT];
+	public Component[] ModelItemComponents = new Component[DATA_ARRAY_SIZE_INCREMENT];
 	public int NextModelItemPointer = 1;
 	public int NextModelItemComponentPointer = 1;
-	public Dictionary<int, List<ModelItemComponent>> ModelComponentsByType;
+	public Dictionary<int, List<Component>> ModelComponentsByType;
 
 	public HashSet<int> FreedItems = new();
 	public int[][] ComponentsByItem = new int[DATA_ARRAY_SIZE_INCREMENT][];
@@ -27,7 +27,7 @@ public partial class Model: IActionSource
 
 	public virtual void BindListeners() {}
 
-	public virtual ModelItemComponent GenerateComponent(int type, IServiceContext s) {
+	public virtual Component GenerateComponent(int type, IServiceContext s) {
 		return Info.GetComponentGenerator(type)(s);
 	}
 
@@ -35,12 +35,12 @@ public partial class Model: IActionSource
 		this.s = s;
 		_modelRunner = s.GetService("ModelRunner");
 		// Generate empty lists for all model item types
-		ModelComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<ModelItemComponent>());
+		ModelComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<Component>());
 		InitializeModel();
 		BindListeners();
 	}
 
-	public int GenerateModelItem(ModelItemComponent[] components) {
+	public int GenerateModelItem(Component[] components) {
 		int index;
 
 		if (FreedItems.Count > 0) {
@@ -52,7 +52,7 @@ public partial class Model: IActionSource
 		HashSet<int> componentsAdded = [];
 		HashSet<int> defaultComponentsToGenerate = [];
 
-		foreach (ModelItemComponent component in components) {
+		foreach (Component component in components) {
 			if (component.ModelItemIndex != -1 || component.Model != null) {
 				GD.PrintErr("Component already bound");
 				continue;
@@ -61,8 +61,8 @@ public partial class Model: IActionSource
 			component.ModelItemIndex = index;
 			AddModelItemComponent(component, index);
 			
-			componentsAdded.Add(component.ModelComponentType);
-			defaultComponentsToGenerate.Remove(component.ModelComponentType);
+			componentsAdded.Add(component.ComponentType);
+			defaultComponentsToGenerate.Remove(component.ComponentType);
 			
 			foreach (int type in component.RequiredComponents) {
 				if (!componentsAdded.Contains(type)) {
@@ -75,7 +75,7 @@ public partial class Model: IActionSource
 		if (defaultComponentResourceFactory != null) {
 			foreach (int componentType in defaultComponentsToGenerate) {
 				ModelItemComponentResource resource = defaultComponentResourceFactory.GetDefaultResource(componentType);
-				ModelItemComponent c2 = resource.GenerateComponent(s);
+				Component c2 = resource.GenerateComponent(s);
 				AddModelItemComponent(c2, index);
 				
 			}
@@ -86,7 +86,7 @@ public partial class Model: IActionSource
 		return index;
 	}
 
-	public ModelItemComponent GetComponentOfTypeBoundToItem(int componentType, int itemIndex) {
+	public Component GetComponentOfTypeBoundToItem(int componentType, int itemIndex) {
 		int componentIndex = ComponentsByItem[itemIndex][componentType];
 
 		if (componentIndex <= 0) return null;
@@ -94,8 +94,8 @@ public partial class Model: IActionSource
 		return ModelItemComponents[ComponentsByItem[itemIndex][componentType]];
 	}
 
-	public ModelItemComponent[] GetComponentsBoundToItem(int itemIndex, System.Type type) {
-		Func<ModelItemComponent, bool> predicate = (c) => type.IsInstanceOfType(c);
+	public Component[] GetComponentsBoundToItem(int itemIndex, System.Type type) {
+		Func<Component, bool> predicate = (c) => type.IsInstanceOfType(c);
 		return ComponentsByItem[itemIndex]
 			.Where(i => i != 0)
 			.Select(i => ModelItemComponents[i])
@@ -103,7 +103,7 @@ public partial class Model: IActionSource
 	}
 
 
-	public ModelItemComponent[] GetComponentsBoundToItem(int itemIndex, Func<ModelItemComponent, bool> predicate = null) {
+	public Component[] GetComponentsBoundToItem(int itemIndex, Func<Component, bool> predicate = null) {
 		if (predicate == null) {
 			predicate = (c) => true;
 		}
@@ -113,14 +113,14 @@ public partial class Model: IActionSource
 			.Where(predicate).ToArray();
 	}
 
-	public ModelItemComponent AddModelItemComponent(ModelItemComponent component, int itemIndex) {
+	public Component AddModelItemComponent(Component component, int itemIndex) {
 		if (NextModelItemComponentPointer >= ModelItemComponents.Length) {
 			Array.Resize(ref ModelItemComponents, ModelItemComponents.Length + DATA_ARRAY_SIZE_INCREMENT);
 		}
 		component.Model = this;
 		component.ComponentIndex = NextModelItemComponentPointer;
 		ModelItemComponents[NextModelItemComponentPointer] = component;
-		ModelComponentsByType[(int)component.ModelComponentType].Add(component);
+		ModelComponentsByType[(int)component.ComponentType].Add(component);
 		NextModelItemComponentPointer++;
 
 		if (itemIndex >= ComponentsByItem.Length) {
@@ -129,22 +129,22 @@ public partial class Model: IActionSource
 
 		if (ComponentsByItem[itemIndex] == null) {
 			ComponentsByItem[itemIndex] = new int[Info.ComponentTypeCount];
-		} else if (ComponentsByItem[itemIndex][(int)component.ModelComponentType] != 0) {
+		} else if (ComponentsByItem[itemIndex][(int)component.ComponentType] != 0) {
 			// TODO remove and dispose of old component
 		}
-		ComponentsByItem[itemIndex][(int)component.ModelComponentType] = component.ComponentIndex;
+		ComponentsByItem[itemIndex][(int)component.ComponentType] = component.ComponentIndex;
 
 		
 		return component;
 
 	}
 
-	public void AddImportedModelItemComponent(ModelItemComponent component) {
+	public void AddImportedModelItemComponent(Component component) {
 		ModelItemComponents[component.ComponentIndex] = component;
-		ModelComponentsByType[(int)component.ModelComponentType].Add(component);
+		ModelComponentsByType[(int)component.ComponentType].Add(component);
 	}
 
-	public T GetModelItemComponentOrNull<T>(int index) where T: ModelItemComponent {
+	public T GetModelItemComponentOrNull<T>(int index) where T: Component {
 		if (index < 0) {
 			return null;
 		}
@@ -201,7 +201,7 @@ public partial class Model: IActionSource
 				continue;
 			};
 			int modelComponentType = (int)modelItemComponentSerialized["ModelComponentType"];
-			ModelItemComponent item = GenerateComponent(modelComponentType, s);
+			Component item = GenerateComponent(modelComponentType, s);
 			item.ImportData(modelItemComponentSerialized);
 			AddImportedModelItemComponent(item);
 
@@ -223,12 +223,12 @@ public partial class Model: IActionSource
 		NextModelItemComponentPointer = nextModelItemComponentPointer;
 		NextModelItemPointer = nextModelItemPointer;
 		
-		ModelItemComponents = new ModelItemComponent[Mathf.CeilToInt((float)nextModelItemComponentPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT];
+		ModelItemComponents = new Component[Mathf.CeilToInt((float)nextModelItemComponentPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT];
 	}
 
 	// DEBUGGING
 	public void PrintModelIndexLists() {
-		string clist = string.Join("\n", ModelItemComponents.Select(s => s == null ? "###" : s.ComponentIndex.ToString() + s.ModelComponentType.ToString()).ToArray());
+		string clist = string.Join("\n", ModelItemComponents.Select(s => s == null ? "###" : s.ComponentIndex.ToString() + s.ComponentType.ToString()).ToArray());
 		GD.Print("###MODEL ITEM COMPONENTS###");
 		GD.Print(clist);
 	}

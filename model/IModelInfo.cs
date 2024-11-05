@@ -8,5 +8,5 @@ public interface IModelInfo {
     public int ComponentTypeCount {get;}
     public string[] ComponentTypeNames {get;}
     public string ComponentTypeName(int type);
-    public Func<IServiceContext, ModelItemComponent> GetComponentGenerator(int type);
+    public Func<IServiceContext, Component> GetComponentGenerator(int type);
 }

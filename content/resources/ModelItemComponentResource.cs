@@ -13,7 +13,7 @@ public partial class ModelItemComponentResource : Resource
     [Export]
     public bool DefaultActive = true;
 
-    public virtual ModelItemComponent GenerateComponent(IServiceContext serviceDirectory) {
+    public virtual Component GenerateComponent(IServiceContext serviceDirectory) {
         return null;
     }
 

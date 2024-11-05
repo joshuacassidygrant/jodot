@@ -3,14 +3,14 @@ namespace Jodot.Model;
 using Godot;
 using Jodot.Injection;
 
-public partial class ModelItemComponent
+public partial class Component
 {
-	public virtual int ModelComponentType => 0;
+	public virtual int ComponentType => 0;
 	public virtual int ModelComponentLayoutTag => 0;
 
 	public virtual string Name => "Base Component";
 
-	public virtual int[] RequiredComponents => []; // TODO: something with this
+	public virtual int[] RequiredComponents => []; 
 
 	public int ComponentIndex = -1;
 	public int ModelItemIndex = -1;
@@ -26,7 +26,7 @@ public partial class ModelItemComponent
 		
 	}
 
-	public ModelItemComponent(IServiceContext serviceDirectory) {
+	public Component(IServiceContext serviceDirectory) {
 		s = serviceDirectory;
 		s.InjectDependencies(this);
 	}
@@ -61,7 +61,7 @@ public partial class ModelItemComponent
 
 	public virtual Godot.Collections.Dictionary<string, Variant> ExportData() {
 		Godot.Collections.Dictionary<string, Variant> data =  new() {
-			{"ModelComponentType", (int)ModelComponentType},
+			{"ModelComponentType", (int)ComponentType},
 			{"ComponentIndex", ComponentIndex},
 			{"ModelItemIndex", ModelItemIndex}
 		};

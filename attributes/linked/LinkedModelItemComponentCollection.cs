@@ -14,7 +14,7 @@ public abstract class LinkedModelItemComponentCollectionBase : Attribute {
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class LinkedModelItemComponentCollection<C, T>: LinkedModelItemComponentCollectionBase
     where C : System.Collections.IList, new()
-    where T: ModelItemComponent
+    where T: Component
 {
     public string IndicesField;
 

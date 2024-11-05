@@ -8,7 +8,7 @@ using Jodot.Events;
 public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
 
     public int ComponentIndex;
-    public ModelItemComponent Component;
+    public Component Component;
 
     public Node3D Renderer;
     public Area3D Collider;
@@ -18,7 +18,7 @@ public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
 	[Inject("Events")] private IEventBus _events;
 	#pragma warning restore CS0649
 
-    public void BindComponent(ModelItemComponent component, IEventBus events) {
+    public void BindComponent(Component component, IEventBus events) {
         Component = component;
         ComponentIndex = component.ComponentIndex;
 
@@ -37,7 +37,7 @@ public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
                 AddChild(Collider);
             }
         }
-        Name = $"{component.ComponentIndex} : {component.ModelComponentType}";
+        Name = $"{component.ComponentIndex} : {component.ComponentType}";
 
         events.WatchModelComponent(ComponentIndex, this);
     }
