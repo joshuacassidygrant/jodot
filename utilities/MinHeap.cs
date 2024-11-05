@@ -1,3 +1,5 @@
+namespace Jodot.Utilities;
+
 using System.Collections.Generic;
 using System.Text;
 using Godot;

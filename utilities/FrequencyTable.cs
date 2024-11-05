@@ -1,3 +1,5 @@
+namespace Jodot.Utilities;
+
 using Godot;
 using System;
 using System.Linq;

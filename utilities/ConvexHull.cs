@@ -1,3 +1,5 @@
+namespace Jodot.Utilities;
+
 using Godot;
 using System.Collections.Generic;
 // Adapted for godot from https://gist.github.com/dLopreiato/7fd142d0b9728518552188794b8a750c
