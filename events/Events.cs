@@ -90,8 +90,8 @@ public partial class Events : Node, IEventBus
 	}
 
 	public void SoilAll(Model model) {
-		DirtyComponents.UnionWith(Enumerable.Range(0, model.NextModelItemComponentPointer).ToArray());
-		DirtyItems.UnionWith(Enumerable.Range(0, model.NextModelItemPointer).ToArray());
+		DirtyComponents.UnionWith(Enumerable.Range(0, model.NextComponentPointer).ToArray());
+		DirtyItems.UnionWith(Enumerable.Range(0, model.NextEntityPointer).ToArray());
 	}
 
 	// INFRA

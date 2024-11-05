@@ -13,14 +13,14 @@ public partial class Component
 	public virtual int[] RequiredComponents => []; 
 
 	public int ComponentIndex = -1;
-	public int ModelItemIndex = -1;
+	public int EntityIndex = -1;
 	public Model Model;
 
 	// SERVICES
 	protected IServiceContext s;
 
 	public int GetComponentIndex => ComponentIndex;
-	public int GetBoundEntityIndex => ModelItemIndex;
+	public int GetBoundEntityIndex => EntityIndex;
 
 	public virtual void OnCreated() {
 		
@@ -63,7 +63,7 @@ public partial class Component
 		Godot.Collections.Dictionary<string, Variant> data =  new() {
 			{"ModelComponentType", (int)ComponentType},
 			{"ComponentIndex", ComponentIndex},
-			{"ModelItemIndex", ModelItemIndex}
+			{"ModelItemIndex", EntityIndex}
 		};
 
 		return data;
@@ -71,7 +71,7 @@ public partial class Component
 
 	public virtual void ImportData(Godot.Collections.Dictionary<string, Variant> data) {
 		ComponentIndex = (int)data["ComponentIndex"];
-		ModelItemIndex = (int)data["ModelItemIndex"];
+		EntityIndex = (int)data["ModelItemIndex"];
 	}
 
 	public virtual void Relink(Model model, IServiceContext s) {

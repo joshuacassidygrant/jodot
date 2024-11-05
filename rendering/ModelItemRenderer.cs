@@ -33,7 +33,7 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
  
 		events.WatchModelItem(index, this);
 
- 		ILocationProvider locationProvider = (ILocationProvider)m.GetComponentOfTypeBoundToItem((int)ModelComponentType.LOCATEABLE, index);
+ 		ILocationProvider locationProvider = (ILocationProvider)m.GetComponentOfTypeBoundToEntity((int)ModelComponentType.LOCATEABLE, index);
 		BoundModelItemIndex = index;
 		BoundModel = m;
 		if (locationProvider != null) {
@@ -41,7 +41,7 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 			Position = locationProvider.GetPosition();
 		}
 
-		foreach (Component component in m.GetComponentsBoundToItem(index, (c) => c is IRenderableComponent)) {
+		foreach (Component component in m.GetComponentsBoundToEntity(index, (c) => c is IRenderableComponent)) {
 
 			ComponentRenderer componentRenderer = generateComponent(component.ComponentType);
 			AddChild(componentRenderer);
@@ -52,7 +52,7 @@ public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IMode
 
 	public virtual void Update()
 	{
- 		ILocationProvider locationProvider = (ILocationProvider)BoundModel.GetComponentOfTypeBoundToItem((int)ModelComponentType.LOCATEABLE, BoundModelItemIndex);
+ 		ILocationProvider locationProvider = (ILocationProvider)BoundModel.GetComponentOfTypeBoundToEntity((int)ModelComponentType.LOCATEABLE, BoundModelItemIndex);
 		if (locationProvider != null)
 		{
 			Position = locationProvider.GetPosition();

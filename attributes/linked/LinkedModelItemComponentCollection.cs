@@ -28,7 +28,7 @@ public class LinkedModelItemComponentCollection<C, T>: LinkedModelItemComponentC
         C collection = new();
 
         foreach (int i in indices) {
-            collection.Add(s.Model.GetModelItemComponentOrNull<T>(i));
+            collection.Add(s.Model.GetComponentOrNull<T>(i));
         }
         field.SetValue(o, collection);
         
