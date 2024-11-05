@@ -1,7 +1,7 @@
+namespace Jodot.Model;
+
 using System;
 using Jodot.Injection;
-
-namespace Jodot.Model;
 
 public interface IModelInfo {
     public int Version {get;}

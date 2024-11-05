@@ -1,3 +1,4 @@
+namespace Jodot.Model;
 
 using Jodot.Injection;
 using Jodot.Model;

@@ -1,3 +1,5 @@
+namespace Jodot.Model;
+
 using Godot;
 
 public interface ILocationProvider {

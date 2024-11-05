@@ -12,11 +12,11 @@ public partial class ModelRendererContainer : Node3D
 
 	[Inject("Events")] public IEventBus _events;
 
-	public ModelItemRenderer AddRenderer(int modelItemIndex, Model model) {
+	public ModelItemRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
 		ModelItemRenderer renderer = new();
 		AddChild(renderer);
 		renderer.Visible = true;
-		renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model);
+		renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider);
 		Renderers.Add(modelItemIndex, renderer);
 		return renderer;
 		

@@ -8,7 +8,7 @@ namespace NodeExtensions
 	{
 		public static void InjectServiceContext(this Node node)
 		{
-			node.GetNode<ServiceDirectory>("/root/ServiceContext").InjectDependencies(node);
+			node.GetNode<ServiceContext>("/root/ServiceContext").InjectDependencies(node);
 		}
 	
 		public static void ClearChildren(this Node node) {

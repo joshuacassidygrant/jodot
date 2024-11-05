@@ -11,7 +11,7 @@ using Jodot.Events;
 using Jodot.Content.Libraries;
 
 
-public partial class ServiceDirectory : Node, IServiceContext
+public partial class ServiceContext : Node, IServiceContext
 {
 	[Injectable("Events")] public IEventBus Events;
 	[Injectable("ModelRunner")] public ModelRunner ModelRunner;

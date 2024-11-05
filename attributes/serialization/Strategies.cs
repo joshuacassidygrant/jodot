@@ -1,6 +1,7 @@
 namespace Jodot.Attributes.Serialization;
 
 using Godot;
+using Jodot.Serialization;
 using System;
 
 public static class SerializationStrategies {
