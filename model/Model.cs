@@ -164,10 +164,12 @@ public partial class Model: IActionSource
 	public virtual Godot.Collections.Dictionary<string, Variant> ExportData() {
 		PrintModelIndexLists();
 
+
 		Godot.Collections.Dictionary<string, Variant> data = new Godot.Collections.Dictionary<string, Variant> {
-			{"NextModelItemPointer", NextEntityPointer},
-			{"NextModelItemComponentPointer", NextComponentPointer},
-			{"ModelItemComponents", new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>(Components.Select(item => item?.ExportData()).ToArray())}
+			{"NextEntityPointer", NextEntityPointer},
+			{"NextComponentPointer", NextComponentPointer},
+			{"Components", new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>(Components.Select(item => item?.Export()).ToArray())},
+			{"Version", Info.Version}
 		};
 		return data;
 	}

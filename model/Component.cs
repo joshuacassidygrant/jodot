@@ -2,8 +2,9 @@ namespace Jodot.Model;
 
 using Godot;
 using Jodot.Injection;
+using Jodot.Serialization;
 
-public partial class Component
+public partial class Component: ISerializable
 {
 	public virtual int ComponentType => 0;
 	public virtual int ModelComponentLayoutTag => 0;
