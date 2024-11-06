@@ -1,8 +1,8 @@
-namespace Jodot.Attributes.Properties;
+namespace Jodot.Serialization;
 
 using System;
 using Godot;
-using Jodot.Attributes.Serialization;
+using Jodot.Serialization;
 
 
 [System.AttributeUsage(System.AttributeTargets.Field)]

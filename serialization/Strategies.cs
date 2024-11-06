@@ -1,7 +1,6 @@
-namespace Jodot.Attributes.Serialization;
+namespace Jodot.Serialization;
 
 using Godot;
-using Jodot.Serialization;
 using Jodot.Utilities;
 using System;
 

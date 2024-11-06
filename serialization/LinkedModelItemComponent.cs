@@ -1,4 +1,4 @@
-namespace Jodot.Attributes.Linked;
+namespace Jodot.Serialization;
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class LinkedModelItemComponent: System.Attribute

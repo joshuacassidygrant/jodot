@@ -1,4 +1,4 @@
-namespace Jodot.Attributes.Linked;
+namespace Jodot.Serialization;
 using System.Collections.Generic;
 using System.Reflection;
 using Jodot.Content.Libraries;
