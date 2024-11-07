@@ -1,5 +1,6 @@
 namespace Jodot.Model;
 
+using System.Reflection;
 using Godot;
 using Jodot.Injection;
 using Jodot.Serialization;
@@ -81,7 +82,8 @@ public partial class Component: ISerializable
 		Model = model;
 		this.s = s;
 
-		// Resolve bound resources
+		this.ResolveBoundResources(s);
+
 	}
 
 

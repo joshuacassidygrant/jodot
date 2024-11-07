@@ -7,8 +7,8 @@ using Jodot.Serialization;
 
 public static class Importer {
 
-   public static Godot.Collections.Dictionary<string, Variant> Import(this ISerializable serializable) {
-		Godot.Collections.Dictionary<string, Variant> data = new();
+   public static void Import(this ISerializable serializable, 	Godot.Collections.Dictionary<string, Variant> data) {
+	
 
         try {
 			foreach (FieldInfo fieldInfo in serializable.GetFieldsOfType<ModelProperty>()) {
@@ -24,7 +24,6 @@ public static class Importer {
 			GD.PrintErr("Export error\n" + e);
 		}
 
-		return data;
    }
 
 	public static FieldInfo GetFieldOfName(this ISerializable serializable, string name) {

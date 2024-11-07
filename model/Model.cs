@@ -208,7 +208,7 @@ public partial class Model: IActionSource
 			};
 			int modelComponentType = (int)modelItemComponentSerialized["ComponentType"];
 			Component item = GenerateComponent(modelComponentType, s);
-			item.ImportData(modelItemComponentSerialized);
+			item.Import(modelItemComponentSerialized);
 			AddImportedComponent(item);
 		};
 

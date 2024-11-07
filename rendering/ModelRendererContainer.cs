@@ -42,7 +42,7 @@ public partial class ModelRendererContainer : Node3D
 
 	public void GenerateRenderers(Model model)
 	{
-		for (int i = 0; i < model.NextEntityPointer; i++)
+		for (int i = 1; i < model.NextEntityPointer; i++)
 		{
 			if (!model.FreedEntities.Contains(i))
 			{
