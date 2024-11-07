@@ -102,7 +102,6 @@ public partial class Events : Node, IEventBus
 	// MODEL GENERIC
 	[Signal]
 	public delegate void ModelItemDestroyedEventHandler(int modelIdx);
-
 	
 	[Signal]
 	public delegate void RequestGameSaveEventHandler(string fileName);
@@ -110,11 +109,17 @@ public partial class Events : Node, IEventBus
 	[Signal]
 	public delegate void RequestGameLoadEventHandler(string fileName);
 
-
 	[Signal]
 	public delegate void RequestDataTestEventHandler();
 
 	[Signal]
 	public delegate void ModelSetupCompletedEventHandler();
+
+	// RENDERING
+	[Signal]
+	public delegate void RequestGenerateAllRenderersEventHandler();
+
+	[Signal]
+	public delegate void RequestDestroyAllRenderersEventHandler();
 
 }

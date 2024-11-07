@@ -7,6 +7,7 @@ using System.Linq;
 using Jodot.Injection;
 using Jodot.Content.Resources;
 using Castle.Components.DictionaryAdapter.Xml;
+using Jodot.Rendering;
 
 public partial class Model: IActionSource
 {
@@ -22,6 +23,7 @@ public partial class Model: IActionSource
 
 	protected IServiceContext s;
 	protected ModelRunner _modelRunner;
+	protected ModelRendererContainer _modelRendererContainer;
 
 	public virtual void BindListeners() {}
 
@@ -37,6 +39,7 @@ public partial class Model: IActionSource
 	public Model(IServiceContext s) {
 		this.s = s;
 		_modelRunner = s.GetService("ModelRunner");
+		_modelRendererContainer = s.GetService("ModelRendererContainer");
 		// Generate empty lists for all model item types
 		ComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<Component>());
 		InitializeModel();
@@ -55,6 +58,9 @@ public partial class Model: IActionSource
 		HashSet<int> componentsAdded = [];
 		HashSet<int> defaultComponentsToGenerate = [];
 
+		bool renderable = false;
+		ILocationProvider locationProvider = null;
+
 		foreach (Component component in components) {
 			if (component.EntityIndex != -1 || component.Model != null) {
 				GD.PrintErr("Component already bound");
@@ -63,7 +69,15 @@ public partial class Model: IActionSource
 
 			component.EntityIndex = index;
 			AddComponent(component, index);
+
+			if (component is IRenderableComponent) {
+				renderable = true;
+			}
 			
+			if (component is ILocationProvider) {
+				locationProvider = (ILocationProvider)component;
+			}
+
 			componentsAdded.Add(component.ComponentType);
 			defaultComponentsToGenerate.Remove(component.ComponentType);
 			
@@ -80,10 +94,21 @@ public partial class Model: IActionSource
 				ModelItemComponentResource resource = defaultComponentResourceFactory.GetDefaultResource(componentType);
 				Component c2 = resource.GenerateComponent(s);
 				AddComponent(c2, index);
-				
+
+				if (c2 is IRenderableComponent) {
+					renderable = true;
+				}
+
+				if (c2 is ILocationProvider) {
+					locationProvider = (ILocationProvider)c2;
+				}
 			}
 		} else {
 			GD.Print($"Missing {defaultComponentsToGenerate.Count} required components on {index}");
+		}
+
+		if (renderable) {
+			_modelRendererContainer.AddRenderer(index, this, locationProvider);
 		}
 
 		return index;
@@ -221,9 +246,6 @@ public partial class Model: IActionSource
 		this.DoPostBindTasks();
 
 		Array.ForEach(Components, c => c?.Relink(this, s));
-
-		//Trigger rerenders
-		s.GetService("ModelRendererContainer")?.GenerateRenderers(this);
 	}
 
 

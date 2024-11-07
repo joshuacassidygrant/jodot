@@ -7,12 +7,15 @@ using Jodot.Model;
 using Jodot.Events;
 using System.Linq;
 
-public partial class ModelRendererContainer : Node3D
+public partial class ModelRendererContainer : Node3D, IInjectSubject
 {
 	public Dictionary<int, ModelItemRenderer> Renderers = new Dictionary<int, ModelItemRenderer>();
 
-	[Inject("Events")] public IEventBus _events;
+	public Model Model;
 
+	[Inject("Events")] public IEventBus _events;
+	[Inject("ModelRunner")] public ModelRunner _modelRunner;
+	
 	public ModelItemRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
 		ModelItemRenderer renderer = new();
 		AddChild(renderer);
@@ -51,4 +54,16 @@ public partial class ModelRendererContainer : Node3D
 			}
 		}
 	}
+
+    public void OnPostInject()
+    {
+        _events.ConnectTo("RequestGenerateAllRenderers", Callable.From(() => {
+			GenerateRenderers(_modelRunner.Model);
+		}));
+
+        _events.ConnectTo("RequestDestroyAllRenderers", Callable.From(() => {
+			ClearRenderers();
+		}));
+
+    }
 }

@@ -106,7 +106,12 @@ public partial class ServiceContext : Node, IServiceContext
 			
 			if (_injectableFields.ContainsKey(name))
 			{
-				fieldInfo.SetValue(o, _injectableFields[name].GetValue(this));
+				try {
+					fieldInfo.SetValue(o, _injectableFields[name].GetValue(this));
+				} catch (Exception e) {
+					GD.PrintErr($"Can't bind {name}!");
+					GD.PrintErr(e);
+				}
 			} else
 			{
 				GD.PrintErr("Can't find service with name " + name + " to bind to " + t.Name);
