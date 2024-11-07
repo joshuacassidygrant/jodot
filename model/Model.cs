@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Jodot.Injection;
 using Jodot.Content.Resources;
+using Castle.Components.DictionaryAdapter.Xml;
 
 public partial class Model: IActionSource
 {
@@ -25,7 +26,12 @@ public partial class Model: IActionSource
 	public virtual void BindListeners() {}
 
 	public virtual Component GenerateComponent(int type, IServiceContext s) {
-		return Info.GetComponentGenerator(type)(s);
+		Func<IServiceContext, Component> generator = Info.GetComponentGenerator(type);
+		if (generator == null) {
+			GD.PrintErr($"Missing component type generator for type # {type}");
+			return null;
+		}
+		return generator(s);
 	}
 
 	public Model(IServiceContext s) {
@@ -117,6 +123,7 @@ public partial class Model: IActionSource
 		component.Model = this;
 		component.ComponentIndex = NextComponentPointer;
 		Components[NextComponentPointer] = component;
+		component.EntityIndex = entityIndex;
 		ComponentsByType[(int)component.ComponentType].Add(component);
 		NextComponentPointer++;
 
@@ -138,6 +145,14 @@ public partial class Model: IActionSource
 
 	public void AddImportedComponent(Component component) {
 		Components[component.ComponentIndex] = component;
+		int entityIndex = component.EntityIndex;
+		if (ComponentsByEntity[entityIndex] == null) {
+			ComponentsByEntity[entityIndex] = new int[Info.ComponentTypeCount];
+		} else if (ComponentsByEntity[entityIndex][(int)component.ComponentType] != 0) {
+			// TODO remove and dispose of old component
+		}
+		ComponentsByEntity[entityIndex][(int)component.ComponentType] = component.ComponentIndex;
+
 		ComponentsByType[(int)component.ComponentType].Add(component);
 	}
 
@@ -168,61 +183,59 @@ public partial class Model: IActionSource
 		Godot.Collections.Dictionary<string, Variant> data = new Godot.Collections.Dictionary<string, Variant> {
 			{"NextEntityPointer", NextEntityPointer},
 			{"NextComponentPointer", NextComponentPointer},
-			{"Components", new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>(Components.Select(item => item?.Export()).ToArray())},
+			{"Components", new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>(Components.Select(item => item?.ExportComponent()).ToArray())},
 			{"Version", Info.Version}
 		};
 		return data;
 	}
 
 	public virtual void ImportData(Godot.Collections.Dictionary<string, Variant> data) {
-		// Clear renderers
-		s.GetService("ModelRendererContainer")?.ClearRenderers();
+		int version = (int)data["Version"];
+		if (version != Info.Version) {
+			GD.PrintErr($"Version mismatch -- loading a save with version {version}, to a build with version {version}. Expect problems.");
+		}
 
 		// Reinitialize model
-		InitializeModel((int)data["NextModelItemPointer"], (int)data["NextModelItemComponentPointer"]);
+		InitializeModel((int)data["NextEntityPointer"], (int)data["NextComponentPointer"]);
 		
-		//Import model items
-		Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>> modelItemsSerialized = (Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>)data["ModelItems"];
-		foreach (Godot.Collections.Dictionary<string, Variant> modelItemSerialized in modelItemsSerialized) {
-			/*if (!modelItemSerialized.ContainsKey("ModelIndex")) {
-				continue;
-			};
-			int modelItemType = (int)modelItemSerialized["ModelItemType"];
-			ModelItem item = GenerateItem(modelItemType, s);
-			item.ImportData(modelItemSerialized); 
-			AddImportedModelItem(item);*/
-		};
-		// TEMP
+		// TODO: regenerate freed entity and componetn index lists
+
 		//Import components
-		Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>> modelItemComponentsSerialized = (Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>)data["ModelItemComponents"];
+		Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>> modelItemComponentsSerialized = (Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>)data["Components"];
 		foreach (Godot.Collections.Dictionary<string, Variant> modelItemComponentSerialized in modelItemComponentsSerialized) {
 			if (!modelItemComponentSerialized.ContainsKey("ComponentIndex")) {
 				continue;
 			};
-			int modelComponentType = (int)modelItemComponentSerialized["ModelComponentType"];
+			int modelComponentType = (int)modelItemComponentSerialized["ComponentType"];
 			Component item = GenerateComponent(modelComponentType, s);
 			item.ImportData(modelItemComponentSerialized);
 			AddImportedComponent(item);
-
 		};
-		// TODO: need to make sure they are in correct list indices!
-		//PrintModelIndexLists();
 
-		//Link model items;
-		//Array.ForEach(ModelItems, m => m?.Relink(this, s));
+
+		// Build ComponentsByType and ComponentsByEntity
 
 		//Link components
+		Array.ForEach(Components, c => c?.Rebind(this, s));
+		
+		this.DoPostBindTasks();
+
 		Array.ForEach(Components, c => c?.Relink(this, s));
 
 		//Trigger rerenders
 		s.GetService("ModelRendererContainer")?.GenerateRenderers(this);
 	}
 
+
+	public virtual void DoPostBindTasks() {}
+
 	public void InitializeModel(int nextEntityPointer = 1, int nextComponentPointer = 1) {
 		NextComponentPointer = nextComponentPointer;
 		NextEntityPointer = nextEntityPointer;
 		
 		Components = new Component[Mathf.CeilToInt((float)nextComponentPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT];
+		ComponentsByEntity = new int[Mathf.CeilToInt((float)nextEntityPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT][];
+		ComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<Component>()); 
 	}
 
 	// DEBUGGING

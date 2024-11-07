@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Events;
+using System.Linq;
 
 public partial class ModelRendererContainer : Node3D
 {
@@ -41,13 +42,13 @@ public partial class ModelRendererContainer : Node3D
 
 	public void GenerateRenderers(Model model)
 	{
-		// TODO: use comopnents
-		/*foreach (ModelItem item in model.ModelItems)
+		for (int i = 0; i < model.NextEntityPointer; i++)
 		{
-			if (item != null)
+			if (!model.FreedEntities.Contains(i))
 			{
-				AddRenderer(item);
+				ILocationProvider locationProvider = (ILocationProvider)model.GetComponentsBoundToEntity(i, typeof(ILocationProvider)).FirstOrDefault();
+				AddRenderer(i, model, locationProvider);
 			}
-		}*/
+		}
 	}
 }

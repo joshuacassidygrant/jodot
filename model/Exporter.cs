@@ -9,6 +9,13 @@ using Jodot.Serialization;
 
 public static class Exporter {
 
+	public static Godot.Collections.Dictionary<string, Variant> ExportComponent(this Component component) {
+		Godot.Collections.Dictionary<string, Variant> data = component.Export();
+		data.Add("ComponentType", component.ComponentType);
+
+		return data;
+	}
+
    public static Godot.Collections.Dictionary<string, Variant> Export(this ISerializable serializable) {
 		Godot.Collections.Dictionary<string, Variant> data = new();
 

@@ -4,12 +4,13 @@ using Godot;
 using Colony.Scripts.Model.Core;
 using Jodot.Injection;
 using Jodot.Events;
-
+using Jodot.Rendering;
 
 public partial class SaverLoader: IInjectSubject
 {
 	[Inject("Events")] private IEventBus _events;
 	[Inject("ModelRunner")] private GameModelRunner _modelRunner;
+	[Inject("ModelRendererContainer")] private ModelRendererContainer _rendererContainer;
 
 	public void SaveModel(string fileName) {
 		if (!IsLegalFileName(fileName)) return;
@@ -27,6 +28,9 @@ public partial class SaverLoader: IInjectSubject
 		using var file = Godot.FileAccess.Open($"user://{fileName}.json", Godot.FileAccess.ModeFlags.Read);
 		string text = file.GetAsText();
 		Godot.Collections.Dictionary<string, Variant> data = (Godot.Collections.Dictionary<string, Variant>)Json.ParseString(text);
+		// TODO: move clean up stuff elsewhere
+		_rendererContainer.ClearRenderers();
+		_modelRunner.NewModel();
 		_modelRunner.GameModel.ImportData(data);
 
 		GD.Print("todo");

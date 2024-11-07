@@ -13,7 +13,9 @@ public partial class Component: ISerializable
 
 	public virtual int[] RequiredComponents => []; 
 
+	[ModelProperty(SerializationStrategy.INT)]
 	public int ComponentIndex = -1;
+	[ModelProperty(SerializationStrategy.INT)]
 	public int EntityIndex = -1;
 	public Model Model;
 
@@ -62,9 +64,9 @@ public partial class Component: ISerializable
 
 	public virtual Godot.Collections.Dictionary<string, Variant> ExportData() {
 		Godot.Collections.Dictionary<string, Variant> data =  new() {
-			{"ModelComponentType", (int)ComponentType},
+			{"ComponentType", (int)ComponentType},
 			{"ComponentIndex", ComponentIndex},
-			{"ModelItemIndex", EntityIndex}
+			{"EntityIndex", EntityIndex}
 		};
 
 		return data;
@@ -72,8 +74,16 @@ public partial class Component: ISerializable
 
 	public virtual void ImportData(Godot.Collections.Dictionary<string, Variant> data) {
 		ComponentIndex = (int)data["ComponentIndex"];
-		EntityIndex = (int)data["ModelItemIndex"];
+		EntityIndex = (int)data["EntityIndex"];
 	}
+
+	public virtual void Rebind(Model model, IServiceContext s) {
+		Model = model;
+		this.s = s;
+
+		// Resolve bound resources
+	}
+
 
 	public virtual void Relink(Model model, IServiceContext s) {
 		//TODO
