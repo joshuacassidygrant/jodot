@@ -28,7 +28,7 @@ public partial class SaverLoader: IInjectSubject
 		string text = file.GetAsText();
 		Godot.Collections.Dictionary<string, Variant> data = (Godot.Collections.Dictionary<string, Variant>)Json.ParseString(text);
 
-		_events.EmitFrom("RequestClearAllRenderers");
+		_events.EmitFrom("RequestDestroyAllRenderers");
 		_modelRunner.NewModel();
 		_modelRunner.GameModel.ImportData(data);
 

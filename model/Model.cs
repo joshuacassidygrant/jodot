@@ -8,6 +8,7 @@ using Jodot.Injection;
 using Jodot.Content.Resources;
 using Castle.Components.DictionaryAdapter.Xml;
 using Jodot.Rendering;
+using Jodot.Events;
 
 public partial class Model: IActionSource
 {
@@ -19,11 +20,15 @@ public partial class Model: IActionSource
 	public Dictionary<int, List<Component>> ComponentsByType;
 
 	public HashSet<int> FreedEntities = new();
+
+	public HashSet<int> FreedComponents = new();
+	
 	public int[][] ComponentsByEntity = new int[DATA_ARRAY_SIZE_INCREMENT][];
 
 	protected IServiceContext s;
 	protected ModelRunner _modelRunner;
 	protected ModelRendererContainer _modelRendererContainer;
+	protected IEventBus _events;
 
 	public virtual void BindListeners() {}
 
@@ -40,6 +45,7 @@ public partial class Model: IActionSource
 		this.s = s;
 		_modelRunner = s.GetService("ModelRunner");
 		_modelRendererContainer = s.GetService("ModelRendererContainer");
+		_events = s.GetService("Events");
 		// Generate empty lists for all model item types
 		ComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<Component>());
 		InitializeModel();
@@ -142,15 +148,23 @@ public partial class Model: IActionSource
 	}
 
 	public Component AddComponent(Component component, int entityIndex) {
-		if (NextComponentPointer >= Components.Length) {
+		int componentIndex;
+		if (FreedComponents.Count > 0) {
+			componentIndex = FreedComponents.First();
+			FreedComponents.Remove(componentIndex);
+		} else {
+			componentIndex = NextComponentPointer;
+			NextComponentPointer++;
+		}
+
+		if (componentIndex >= Components.Length) {
 			Array.Resize(ref Components, Components.Length + DATA_ARRAY_SIZE_INCREMENT);
 		}
 		component.Model = this;
-		component.ComponentIndex = NextComponentPointer;
-		Components[NextComponentPointer] = component;
+		component.ComponentIndex = componentIndex;
+		Components[componentIndex] = component;
 		component.EntityIndex = entityIndex;
 		ComponentsByType[(int)component.ComponentType].Add(component);
-		NextComponentPointer++;
 
 		if (entityIndex >= ComponentsByEntity.Length) {
 			Array.Resize(ref ComponentsByEntity, ComponentsByEntity.Length + DATA_ARRAY_SIZE_INCREMENT);
@@ -179,6 +193,29 @@ public partial class Model: IActionSource
 		ComponentsByEntity[entityIndex][(int)component.ComponentType] = component.ComponentIndex;
 
 		ComponentsByType[(int)component.ComponentType].Add(component);
+	}
+
+	public void FreeEntity(int entityIndex) {
+		foreach (int componentIndex in ComponentsByEntity[entityIndex]) {
+			FreeComponent(componentIndex);
+		}
+
+		ComponentsByEntity[entityIndex] = null;
+
+		FreedEntities.Add(entityIndex);
+		_events.EmitFrom("OnEntityFreed", entityIndex);
+	}
+
+	public void FreeComponent(int componentIndex) {
+		if (componentIndex == 0) return;
+		Component component = Components[componentIndex];
+		ComponentsByType[component.ComponentType].Remove(component);
+		ComponentsByEntity[component.EntityIndex][component.ComponentType] = 0;
+		Components[componentIndex] = null;
+
+		FreedComponents.Add(componentIndex);
+
+		_events.EmitFrom("OnComponentFreed", componentIndex);
 	}
 
 	public T GetComponentOrNull<T>(int index) where T: Component {

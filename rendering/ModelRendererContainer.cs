@@ -65,5 +65,28 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 			ClearRenderers();
 		}));
 
+		_events.ConnectTo("OnComponentFreed", Callable.From((int componentIndex) => {
+			Component component = _modelRunner.Model.Components[componentIndex];
+			if (component == null) return;
+			int entityIndex = component.EntityIndex;
+
+			if (!Renderers.ContainsKey(entityIndex)) return;
+			ModelItemRenderer renderer = Renderers[entityIndex];
+
+			renderer.FreeComponentRenderer(component.ComponentType);
+
+		}));
+
+
+		_events.ConnectTo("OnEntityFreed", Callable.From((int entityIndex) => {
+			if (!Renderers.ContainsKey(entityIndex)) return;
+			ModelItemRenderer renderer = Renderers[entityIndex];
+
+			renderer.FreeRenderer();
+
+			Renderers.Remove(entityIndex);
+
+		}));
+
     }
 }
