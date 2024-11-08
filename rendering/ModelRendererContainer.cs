@@ -9,15 +9,15 @@ using System.Linq;
 
 public partial class ModelRendererContainer : Node3D, IInjectSubject
 {
-	public Dictionary<int, ModelItemRenderer> Renderers = new Dictionary<int, ModelItemRenderer>();
+	public Dictionary<int, EntityRenderer> Renderers = new Dictionary<int, EntityRenderer>();
 
 	public Model Model;
 
 	[Inject("Events")] public IEventBus _events;
 	[Inject("ModelRunner")] public ModelRunner _modelRunner;
 	
-	public ModelItemRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
-		ModelItemRenderer renderer = new();
+	public EntityRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
+		EntityRenderer renderer = new();
 		AddChild(renderer);
 		renderer.Visible = true;
 		renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider);
@@ -32,7 +32,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 
 	public void ClearRenderers()
 	{
-		foreach (ModelItemRenderer renderer in Renderers.Values)
+		foreach (EntityRenderer renderer in Renderers.Values)
 		{
 			if (renderer != null && IsInstanceValid(renderer))
 			{
@@ -40,7 +40,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 			}
 		}
 
-		Renderers = new Dictionary<int, ModelItemRenderer>();
+		Renderers = new Dictionary<int, EntityRenderer>();
 	}
 
 	public void GenerateRenderers(Model model)
@@ -71,7 +71,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 			int entityIndex = component.EntityIndex;
 
 			if (!Renderers.ContainsKey(entityIndex)) return;
-			ModelItemRenderer renderer = Renderers[entityIndex];
+			EntityRenderer renderer = Renderers[entityIndex];
 
 			renderer.FreeComponentRenderer(component.ComponentType);
 
@@ -80,7 +80,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 
 		_events.ConnectTo("OnEntityFreed", Callable.From((int entityIndex) => {
 			if (!Renderers.ContainsKey(entityIndex)) return;
-			ModelItemRenderer renderer = Renderers[entityIndex];
+			EntityRenderer renderer = Renderers[entityIndex];
 
 			renderer.FreeRenderer();
 

@@ -7,7 +7,7 @@ using Jodot.Model;
 using Jodot.Events;
 using System.Collections.Generic;
 
-public partial class ModelItemRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener
+public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener
 {
 	public int BoundModelItemIndex;
 	public Model BoundModel;
