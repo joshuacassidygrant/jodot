@@ -7,7 +7,7 @@ using System;
 
 public partial class ModelFloatStatModifier: LocalModelData, IModelStatData
 {
-    public FloatStatCode StatCode;
+    public int StatCode;
     public float Value;
 
     public override Dictionary<string, Variant> ExportData()
@@ -22,7 +22,7 @@ public partial class ModelFloatStatModifier: LocalModelData, IModelStatData
     public override void ImportData(Dictionary<string, Variant> data)
     {
         try {
-			StatCode = (FloatStatCode)(int)data["StatCode"];
+			StatCode = (int)data["StatCode"];
 			Value = (float)data["Value"];
 		} catch (Exception e) {
 			GD.PrintErr(e);
