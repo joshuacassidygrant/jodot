@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Jodot.Injection;
 using Jodot.Content.Resources;
-using Castle.Components.DictionaryAdapter.Xml;
 using Jodot.Rendering;
 using Jodot.Events;
 
