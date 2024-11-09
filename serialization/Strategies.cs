@@ -1,6 +1,7 @@
 namespace Jodot.Serialization;
 
 using Godot;
+using Jodot.Model;
 using Jodot.Utilities;
 using System;
 
@@ -28,7 +29,7 @@ public static class SerializationStrategies {
 			case SerializationStrategy.FLOAT_STAT_MODIFIER:
 				LocalModelData fd = (LocalModelData)o;
 				return fd.ExportData();
-			case SerializationStrategy.MODEL_RESOURCE:
+			case SerializationStrategy.LOCAL_DATA:
 				LocalModelData rd = (LocalModelData)o;
 				return rd.ExportData();
 			default:
@@ -62,8 +63,8 @@ public static class SerializationStrategies {
 				Godot.Collections.Dictionary<string, Variant> fdata = (Godot.Collections.Dictionary<string, Variant>)o;
 				fd.ImportData(fdata);
 				return fd;
-			case SerializationStrategy.MODEL_RESOURCE:
-				ModelResource mr = new();
+			case SerializationStrategy.LOCAL_DATA:
+				LocalModelData mr = new();
 				Godot.Collections.Dictionary<string, Variant> rdata = (Godot.Collections.Dictionary<string, Variant>)o;
 				mr.ImportData(rdata);
 				return mr;
@@ -83,8 +84,8 @@ public enum SerializationStrategy {
 	V2I,
 	V3,
 	ENUM,
+	LOCAL_DATA,
 	INT_STAT_MODIFIER,
 	FLOAT_STAT_MODIFIER,
-	MODEL_RESOURCE
 	
 }

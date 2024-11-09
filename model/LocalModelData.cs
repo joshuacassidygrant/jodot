@@ -1,7 +1,9 @@
 namespace Jodot.Serialization;
 using Godot;
 
-public abstract class LocalModelData: ISerializable {
-    public abstract Godot.Collections.Dictionary<string, Variant> ExportData();
-    public abstract void ImportData(Godot.Collections.Dictionary<string, Variant> data); 
+public class LocalModelData: ISerializable {
+    public virtual Godot.Collections.Dictionary<string, Variant> ExportData() {
+        return new Godot.Collections.Dictionary<string, Variant>();
+    }
+    public virtual void ImportData(Godot.Collections.Dictionary<string, Variant> data) {}
 }
