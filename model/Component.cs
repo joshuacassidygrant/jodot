@@ -1,6 +1,5 @@
 namespace Jodot.Model;
 
-using System.Reflection;
 using Godot;
 using Jodot.Injection;
 using Jodot.Serialization;
@@ -34,12 +33,7 @@ public partial class Component: ISerializable
 		s = serviceDirectory;
 		s.InjectDependencies(this);
 	}
-
 	
-    public virtual ModelItemComponentSubPanel GenerateUiSubPanel() {
-        return null;
-    }
-
 	public virtual void Link(int modelItemIndex, Model model) {
 	}
 	

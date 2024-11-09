@@ -1,20 +1,19 @@
 namespace Jodot.Serialization;
 
 using Godot;
-using Colony.Scripts.Model.Core;
 using Jodot.Injection;
 using Jodot.Events;
-using Jodot.Rendering;
+using Jodot.Model;
 
 public partial class SaverLoader: IInjectSubject
 {
 	[Inject("Events")] private IEventBus _events;
-	[Inject("ModelRunner")] private GameModelRunner _modelRunner;
+	[Inject("ModelRunner")] private ModelRunner _modelRunner;
 
 	public void SaveModel(string fileName) {
 		if (!IsLegalFileName(fileName)) return;
 
-		string jsonString = Json.Stringify(_modelRunner.GameModel.ExportData());
+		string jsonString = Json.Stringify(_modelRunner.Model.ExportData());
 		
 		using var file = Godot.FileAccess.Open($"user://{fileName}.json", Godot.FileAccess.ModeFlags.Write);
 		file.StoreString(jsonString);
@@ -30,7 +29,7 @@ public partial class SaverLoader: IInjectSubject
 
 		_events.EmitFrom("RequestDestroyAllRenderers");
 		_modelRunner.NewModel();
-		_modelRunner.GameModel.ImportData(data);
+		_modelRunner.Model.ImportData(data);
 
 		_events.EmitFrom("RequestGenerateAllRenderers");
 	}
