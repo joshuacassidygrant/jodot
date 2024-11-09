@@ -1,19 +1,15 @@
 namespace Jodot.Model;
 
 using Jodot.Injection;
-using Jodot.Model;
 using Jodot.Events;
+using System.Collections.Generic;
 
-public abstract class ModelAction
+public abstract class ModelAction: IActionSource
 {
 	protected IServiceContext s;
 	[Inject("ModelRunner")] protected ModelRunner modelRunner;
 
 	[Inject("Events")] protected Events events;
-
-	// Actions called by other actions must have less complexity.
-	// Used to protect vs. cycles. Set in constructor.
-	public int Complexity = 0;
 
 	public string SubName = "Default";
 	
@@ -24,6 +20,9 @@ public abstract class ModelAction
 		// TODO
 		return model;
 	}
+
+	public Queue<ModelAction> SubActions = new();
+	public ModelAction ParentAction;
 
 	public ModelAction(IServiceContext serviceDirectory) {
 		s = serviceDirectory;

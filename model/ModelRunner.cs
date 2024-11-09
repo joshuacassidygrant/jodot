@@ -2,11 +2,12 @@ namespace Jodot.Model;
 
 using Godot;
 using System;
-using Nito.Collections;
 using System.Text;
 using System.Collections.Generic;
 using Jodot.Injection;
 using Jodot.Events;
+using System.Linq;
+using System.Diagnostics;
 
 public partial class ModelRunner : IActionSource
 {
@@ -16,7 +17,7 @@ public partial class ModelRunner : IActionSource
 	public IEventBus _events;
 	protected IServiceContext s;
 
-	private Deque<ModelAction> _actionQueue = new();
+	private Queue<ModelAction> _actionQueue = new();
 
 	public void BindEvents(IEventBus events) {
 		_events = events;
@@ -33,55 +34,76 @@ public partial class ModelRunner : IActionSource
 		Model = new Model(s);
 	}
 
-	public void QueueAction(ModelAction action, IActionSource source)
-	{
-		_actionQueue.AddToBack(action);
-		RunQueue();
-	}
-
 	public void QueueActions(List<ModelAction> actions, IActionSource source) {
-		foreach (ModelAction action in actions) {
-			_actionQueue.AddToBack(action);
+        foreach (ModelAction action in actions)
+        {
+            if (source is ModelAction parentAction)
+            {
+                action.ParentAction = parentAction;
+
+                if (IsCyclicalAction(action))
+                {
+                    throw new Exception("Cyclical action detected");
+                }
+                parentAction.SubActions.Enqueue(action);
+            }
+            else
+            {
+                _actionQueue.Enqueue(action);
+            }
+        }
+
+		if (source is ModelAction parent) {
+			RunQueue(parent.SubActions);
+		} else {
+        	RunQueue(_actionQueue);
 		}
-		RunQueue();
 	}
 
-	public void PushChildAction(ModelAction action, ModelAction parentAction) {
-		if (action.Complexity >= parentAction.Complexity) {
-			throw new Exception($"Illegal action parenting between {action} and {parentAction}. {action} must be must have less complexity than {parentAction} ");
-		}
-		_actionQueue.AddToFront(action);
-		RunQueue();
-	}
+	public void RunQueue(Queue<ModelAction> queue) {	
+		if (queue.Count == 0) return;
 
-	public void PushChildActions(List<ModelAction> actions, ModelAction parentAction) {		
-		foreach (ModelAction action in actions) {
-			if (action.Complexity >= parentAction.Complexity) {
-				throw new Exception($"Illegal action parenting between {action} and {parentAction}.  {action} must be must have less complexity than {parentAction} ");
-			}
-			_actionQueue.AddToFront(action);
-		}
+		// DebugLogQueue();
 
-		RunQueue();
-	}
-
-	public void RunQueue() {	
-		if (_actionQueue.Count == 0) return;
-		//DebugLogQueue();
-
-		ModelAction action = _actionQueue.RemoveFromFront();
+		ModelAction action = queue.Dequeue();
 		if (action.CanDo(Model)) {
 			action.Do(Model);
 		}
-		RunQueue();
+		RunQueue(queue);
+	}
+
+	public bool IsCyclicalAction(ModelAction action) {
+		HashSet<Type> seenActionTypes = new();
+		ModelAction current = action;
+		while(current != null) {
+			if (seenActionTypes.Contains(current.GetType())) {
+				return true;
+			}
+			seenActionTypes.Add(current.GetType());
+			current = current.ParentAction;
+		}
+		return false;
 	}
 
 	public void DebugLogQueue() {
 		StringBuilder sb = new();
+
 		sb.AppendLine("Model Action Queue:");
 		foreach (ModelAction action in _actionQueue) {
-			sb.AppendLine(action.ToString());
+			BuildActionString(sb, 0, action);
 		}
+		sb.Append('\n');
 		GD.Print(sb.ToString());
+	}
+
+	private StringBuilder BuildActionString(StringBuilder sb, int depth, ModelAction action) {
+		sb.Append(action.ToString());
+		foreach (ModelAction subaction in action.SubActions) {
+			sb.Append(Enumerable.Repeat("-", depth));
+			sb.Append(subaction.ToString());
+			sb = BuildActionString(sb, depth + 1, subaction);
+			sb.Append('\n');
+		}
+		return sb;
 	}
 }
