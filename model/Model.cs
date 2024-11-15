@@ -68,14 +68,14 @@ public partial class Model: IActionSource
 
 		foreach (Component component in components) {
 			if (component.EntityIndex != -1 || component.Model != null) {
-				GD.PrintErr("Component already bound");
+				GD.PrintErr($"Component {index} {component.EntityIndex} already bound");
 				continue;
 			}
 
 			component.EntityIndex = index;
 			AddComponent(component, index);
 
-			if (component is IRenderableComponent) {
+			if (component is IRenderableComponent || component is IRenderableComponent2D) {
 				renderable = true;
 			}
 			

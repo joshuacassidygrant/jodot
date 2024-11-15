@@ -7,15 +7,13 @@ using Jodot.Model;
 using Jodot.Events;
 using System.Collections.Generic;
 
-public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelComponentUpdateListener, IEntityRenderer
+public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModelComponentUpdateListener, IEntityRenderer
 {
 	public int BoundModelItemIndex;
 	public Model BoundModel;
-	public Vector3 NextPosition;
-	public Vector3 LastPosition;
-	public Area3D Collider;
+	public Area2D Collider;
 	public ILocationProvider LocationProvider;
-	public Dictionary<int, ComponentRenderer> ComponentRenderersByType = new();
+	public Dictionary<int, ComponentRenderer2D> ComponentRenderersByType = new();
 
 	public bool Valid => IsInstanceValid(this);
 
@@ -30,7 +28,7 @@ public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelCo
 
 	}
 
-	public void BindModelItem(int index, Func<int, ComponentRenderer> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider)
+	public void BindModelItem(int index, Func<int, ComponentRenderer2D> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider)
 	{
 		_events = events;
 		events.WatchModelItem(index, this);
@@ -40,22 +38,24 @@ public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelCo
 		BoundModel = m;
 		if (locationProvider != null) {
 			events.WatchModelComponent(locationProvider.GetComponentIndex, this);
-			Position = locationProvider.GetPosition();
+			Vector3 pos = locationProvider.GetPosition();
+			Position = new(pos.X, pos.Y);
 		}
 
-		foreach (Component component in m.GetComponentsBoundToEntity(index, (c) => c is IRenderableComponent)) {
+		foreach (Component component in m.GetComponentsBoundToEntity(index, (c) => c is IRenderableComponent2D)) {
 
-			ComponentRenderer componentRenderer = generateComponent(component.ComponentType);
+			ComponentRenderer2D componentRenderer = generateComponent(component.ComponentType);
 			AddChild(componentRenderer);
 			componentRenderer.BindComponent(component, events);
 			ComponentRenderersByType.Add(component.ComponentType, componentRenderer);
+			componentRenderer.PostBind();
 		}
 		Name = $"{index}";
 	}
 
 	public void FreeComponentRenderer(int componentType) {
 		if (!ComponentRenderersByType.ContainsKey(componentType)) return;
-		ComponentRenderer renderer = ComponentRenderersByType[componentType];
+		ComponentRenderer2D renderer = ComponentRenderersByType[componentType];
 		if (IsInstanceValid(renderer)) {
 			renderer.QueueFree();
 			_events.UnwatchModelComponent(renderer.ComponentIndex, renderer);
@@ -85,7 +85,8 @@ public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelCo
 	{
 		if (LocationProvider != null)
 		{
-			Position = LocationProvider.GetPosition();
+			Vector3 pos = LocationProvider.GetPosition();
+			Position = new(pos.X, pos.Y);
 		}
 	}
 

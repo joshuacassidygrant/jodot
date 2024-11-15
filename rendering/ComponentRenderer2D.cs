@@ -5,13 +5,13 @@ using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Events;
 
-public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
+public partial class ComponentRenderer2D: Node2D, IModelComponentUpdateListener {
 
     public int ComponentIndex;
     public Component Component;
 
-    public Node3D Renderer;
-    public Node3D Collider;
+    public Node2D Renderer;
+    public Node2D Collider;
 
 	// Services
 	#pragma warning disable CS0649
@@ -22,11 +22,11 @@ public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
         Component = component;
         ComponentIndex = component.ComponentIndex;
 
-        IRenderableComponent renderableComponent = (IRenderableComponent)component;
+        IRenderableComponent2D renderableComponent2D = (IRenderableComponent2D)component;
 
-        if (renderableComponent != null) {
-            Renderer = (Node3D)renderableComponent.RendererProto?.Duplicate();
-            Collider = (Area3D)renderableComponent.ColliderProto?.Duplicate();
+        if (renderableComponent2D != null) {
+            Renderer = (Node2D)renderableComponent2D.RendererProto?.Duplicate();
+            Collider = (Area2D)renderableComponent2D.ColliderProto?.Duplicate();
             
             if (Renderer != null) {
                 Renderer.Visible = true;
@@ -38,7 +38,7 @@ public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
             }
         }
         Name = $"{component.ComponentIndex} : {component.ComponentType}";
-        PostBind();
+
         events.WatchModelComponent(ComponentIndex, this);
     }
 
@@ -47,6 +47,6 @@ public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
     }
 
     public virtual void PostBind() {
-
+        
     }
 }

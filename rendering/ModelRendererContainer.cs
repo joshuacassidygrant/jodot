@@ -7,27 +7,41 @@ using Jodot.Model;
 using Jodot.Events;
 using System.Linq;
 
-public partial class ModelRendererContainer : Node3D, IInjectSubject
+public partial class ModelRendererContainer : Node, IInjectSubject
 {
-	public Dictionary<int, EntityRenderer> Renderers = new Dictionary<int, EntityRenderer>();
+	public Dictionary<int, IEntityRenderer> Renderers = new Dictionary<int, IEntityRenderer>();
+
+	public virtual bool Is3D => true;
 
 	public Model Model;
 
 	[Inject("Events")] public IEventBus _events;
 	[Inject("ModelRunner")] public ModelRunner _modelRunner;
 	
-	public EntityRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
-		EntityRenderer renderer = new();
-		AddChild(renderer);
-		renderer.Visible = true;
-		renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider);
-		Renderers.Add(modelItemIndex, renderer);
-		return renderer;
-		
+	public IEntityRenderer AddRenderer(int modelItemIndex, Model model, ILocationProvider locationProvider) {
+		if (Is3D) {
+			EntityRenderer renderer = new EntityRenderer();
+			AddChild(renderer);
+			renderer.Visible = true;
+			renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider);
+			Renderers.Add(modelItemIndex, renderer);
+			return renderer;
+		} else {
+			EntityRenderer2D renderer2D = new();
+			AddChild(renderer2D);
+			renderer2D.Visible = true;
+			renderer2D.BindModelItem(modelItemIndex, GenerateComponent2D, _events, model, locationProvider);
+			Renderers.Add(modelItemIndex, renderer2D);
+			return renderer2D;
+		}		
 	}
 
 	public virtual ComponentRenderer GenerateComponent(int type) {
 		return new ComponentRenderer();
+	}
+
+	public virtual ComponentRenderer2D GenerateComponent2D(int type) {
+		return new ComponentRenderer2D();
 	}
 
 	public void ClearRenderers()
@@ -40,7 +54,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 			}
 		}
 
-		Renderers = new Dictionary<int, EntityRenderer>();
+		Renderers = new Dictionary<int, IEntityRenderer>();
 	}
 
 	public void GenerateRenderers(Model model)
@@ -71,7 +85,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 			int entityIndex = component.EntityIndex;
 
 			if (!Renderers.ContainsKey(entityIndex)) return;
-			EntityRenderer renderer = Renderers[entityIndex];
+			IEntityRenderer renderer = Renderers[entityIndex];
 
 			renderer.FreeComponentRenderer(component.ComponentType);
 
@@ -80,7 +94,7 @@ public partial class ModelRendererContainer : Node3D, IInjectSubject
 
 		_events.ConnectTo("OnEntityFreed", Callable.From((int entityIndex) => {
 			if (!Renderers.ContainsKey(entityIndex)) return;
-			EntityRenderer renderer = Renderers[entityIndex];
+			IEntityRenderer renderer = Renderers[entityIndex];
 
 			renderer.FreeRenderer();
 
