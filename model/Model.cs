@@ -116,6 +116,13 @@ public partial class Model: IActionSource
 			_modelRendererContainer.AddRenderer(index, this, locationProvider);
 		}
 
+		foreach (int idx in ComponentsByEntity[index]) {
+			if  (idx > 0) {
+				Component c = Components[idx];
+				c.Bind(this, s);
+			}
+		}
+
 		return index;
 	}
 

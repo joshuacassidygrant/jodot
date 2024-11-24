@@ -67,9 +67,14 @@ public partial class Component: ISerializable
 		return data;
 	}
 
+
 	public virtual void ImportData(Godot.Collections.Dictionary<string, Variant> data) {
 		ComponentIndex = (int)data["ComponentIndex"];
 		EntityIndex = (int)data["EntityIndex"];
+	}
+
+	public virtual void Bind(Model model, IServiceContext s) {
+		// Do anything here that we might need after an entity is generated
 	}
 
 	public virtual void Rebind(Model model, IServiceContext s) {
