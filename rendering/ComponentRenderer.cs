@@ -5,7 +5,7 @@ using Jodot.Injection;
 using Jodot.Model;
 using Jodot.Events;
 
-public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener {
+public partial class ComponentRenderer: Node3D, IModelComponentUpdateListener, IComponentRenderer {
 
     public int ComponentIndex;
     public Component Component;

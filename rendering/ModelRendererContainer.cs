@@ -10,7 +10,7 @@ using System.Linq;
 public partial class ModelRendererContainer : Node, IInjectSubject
 {
 	public Dictionary<int, IEntityRenderer> Renderers = new Dictionary<int, IEntityRenderer>();
-
+	public Dictionary<int, ComponentRenderer> ComponentRenderers = new Dictionary<int, ComponentRenderer>();
 	public virtual bool Is3D => true;
 
 	public Model Model;
@@ -35,6 +35,18 @@ public partial class ModelRendererContainer : Node, IInjectSubject
 			return renderer2D;
 		}		
 	}
+
+	public IEntityRenderer GetEntityRenderer(int key) {
+		if (!Renderers.ContainsKey(key)) return null;
+
+		return Renderers[key];
+	}
+	 
+	public IComponentRenderer GetComponentRenderer(int key) {
+		if (!ComponentRenderers.ContainsKey(key)) return null;
+
+		return ComponentRenderers[key];
+	} 
 
 	public virtual ComponentRenderer GenerateComponent(int type) {
 		return new ComponentRenderer();
