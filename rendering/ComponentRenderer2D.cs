@@ -35,7 +35,6 @@ public partial class ComponentRenderer2D: Node2D, IModelComponentUpdateListener,
                     renderer2d.Hframes = animateable.AnimationHFrames;
                     Animator = new AnimationPlayer();
                     Renderer.AddChild(Animator);
-                    // TODO: move this
                     Animator.AddAnimationLibrary("GENERIC", animationLibrary);
                 }
             }
