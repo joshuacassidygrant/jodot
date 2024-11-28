@@ -30,7 +30,7 @@ public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelCo
 
 	}
 
-	public void BindModelItem(int index, Func<int, ComponentRenderer> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider)
+	public void BindModelItem(int index, Func<int, ComponentRenderer> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider, ModelRendererContainer modelRendererContainer)
 	{
 		_events = events;
 		events.WatchModelItem(index, this);
@@ -49,6 +49,7 @@ public partial class EntityRenderer : Node3D, IModelItemUpdateListener, IModelCo
 			AddChild(componentRenderer);
 			componentRenderer.BindComponent(component, events);
 			ComponentRenderersByType.Add(component.ComponentType, componentRenderer);
+			modelRendererContainer.ComponentRenderers.Add(component.ComponentIndex, componentRenderer);
 		}
 		Name = $"{index}";
 	}

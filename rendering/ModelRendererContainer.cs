@@ -10,7 +10,7 @@ using System.Linq;
 public partial class ModelRendererContainer : Node, IInjectSubject
 {
 	public Dictionary<int, IEntityRenderer> Renderers = new Dictionary<int, IEntityRenderer>();
-	public Dictionary<int, ComponentRenderer> ComponentRenderers = new Dictionary<int, ComponentRenderer>();
+	public Dictionary<int, IComponentRenderer> ComponentRenderers = new Dictionary<int, IComponentRenderer>();
 	public virtual bool Is3D => true;
 
 	public Model Model;
@@ -23,14 +23,14 @@ public partial class ModelRendererContainer : Node, IInjectSubject
 			EntityRenderer renderer = new EntityRenderer();
 			AddChild(renderer);
 			renderer.Visible = true;
-			renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider);
+			renderer.BindModelItem(modelItemIndex, GenerateComponent, _events, model, locationProvider, this);
 			Renderers.Add(modelItemIndex, renderer);
 			return renderer;
 		} else {
 			EntityRenderer2D renderer2D = new();
 			AddChild(renderer2D);
 			renderer2D.Visible = true;
-			renderer2D.BindModelItem(modelItemIndex, GenerateComponent2D, _events, model, locationProvider);
+			renderer2D.BindModelItem(modelItemIndex, GenerateComponent2D, _events, model, locationProvider, this);
 			Renderers.Add(modelItemIndex, renderer2D);
 			return renderer2D;
 		}		

@@ -28,7 +28,7 @@ public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModel
 
 	}
 
-	public void BindModelItem(int index, Func<int, ComponentRenderer2D> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider)
+	public void BindModelItem(int index, Func<int, ComponentRenderer2D> generateComponent, IEventBus events, Model m, ILocationProvider locationProvider, ModelRendererContainer modelRendererContainer)
 	{
 		_events = events;
 		events.WatchModelItem(index, this);
@@ -49,6 +49,7 @@ public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModel
 			componentRenderer.BindComponent(component, events);
 			ComponentRenderersByType.Add(component.ComponentType, componentRenderer);
 			componentRenderer.PostBind();
+			modelRendererContainer.ComponentRenderers.Add(component.ComponentIndex, componentRenderer);
 		}
 		Name = $"{index}";
 	}
