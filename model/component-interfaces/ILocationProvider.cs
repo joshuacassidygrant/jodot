@@ -7,4 +7,6 @@ public interface ILocationProvider {
     public int GetBoundEntityIndex { get; }
     public Vector3 GetPosition();
 
+    public bool IsPositionValid();
+
 }

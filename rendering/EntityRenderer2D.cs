@@ -40,6 +40,7 @@ public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModel
 			events.WatchModelComponent(locationProvider.GetComponentIndex, this);
 			Vector3 pos = locationProvider.GetPosition();
 			Position = new(pos.X, pos.Y);
+			Visible = locationProvider.IsPositionValid();
 		}
 
 		foreach (Component component in m.GetComponentsBoundToEntity(index, (c) => c is IRenderableComponent2D)) {
@@ -88,6 +89,7 @@ public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModel
 		{
 			Vector3 pos = LocationProvider.GetPosition();
 			Position = new(pos.X, pos.Y);
+			Visible = LocationProvider.IsPositionValid();
 		}
 	}
 
