@@ -58,15 +58,26 @@ public partial class ModelRendererContainer : Node, IInjectSubject
 
 	public void ClearRenderers()
 	{
-		foreach (EntityRenderer renderer in Renderers.Values)
-		{
-			if (renderer != null && IsInstanceValid(renderer))
+		if (Is3D) {
+			foreach (EntityRenderer renderer in Renderers.Values)
 			{
-				renderer.QueueFree();
+				if (renderer != null && IsInstanceValid(renderer))
+				{
+					renderer.FreeRenderer();
+				}
 			}
-		}
+		} else {
+			foreach (EntityRenderer2D renderer in Renderers.Values)
+			{
+				if (renderer != null && IsInstanceValid(renderer))
+				{
+					renderer.FreeRenderer();
+				}
+			}
 
-		Renderers = new Dictionary<int, IEntityRenderer>();
+		}
+		ComponentRenderers = [];
+		Renderers = [];
 	}
 
 	public void GenerateRenderers(Model model)

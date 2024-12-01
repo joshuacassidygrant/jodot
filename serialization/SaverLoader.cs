@@ -32,6 +32,7 @@ public partial class SaverLoader: IInjectSubject
 		_modelRunner.Model.ImportData(data);
 
 		_events.EmitFrom("RequestGenerateAllRenderers");
+		_events.EmitFrom("HandleGameLoaded");
 	}
 
 	public bool IsLegalFileName(string fileName) {

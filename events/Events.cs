@@ -130,6 +130,9 @@ public partial class Events : Node, IEventBus
 	public delegate void RequestGameLoadEventHandler(string fileName);
 
 	[Signal]
+	public delegate void HandleGameLoadedEventHandler();
+
+	[Signal]
 	public delegate void RequestDataTestEventHandler();
 
 	[Signal]
