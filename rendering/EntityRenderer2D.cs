@@ -83,6 +83,17 @@ public partial class EntityRenderer2D : Node2D, IModelItemUpdateListener, IModel
 		QueueFree();
 	}
 
+	public void FaceX(Vector2 target) {
+        float val = Scale.X;
+        if (Position.X > target.X) {
+            val = -1f;
+        } else if (Position.X < target.X) {
+            val = 1f;
+        }
+		Scale = new(val, 1f);
+
+	}
+
 	public virtual void Update()
 	{
 		if (LocationProvider != null)

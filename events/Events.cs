@@ -138,7 +138,11 @@ public partial class Events : Node, IEventBus
 	[Signal]
 	public delegate void ModelSetupCompletedEventHandler();
 
+
 	// RENDERING
+	[Signal]
+	public delegate void RequestSkipAnimationEventHandler();
+
 	[Signal]
 	public delegate void RequestGenerateAllRenderersEventHandler();
 

@@ -8,6 +8,8 @@ using Jodot.Injection;
 using Jodot.Events;
 using System.Linq;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Threading;
 
 public partial class ModelRunner : IActionSource
 {
@@ -18,9 +20,14 @@ public partial class ModelRunner : IActionSource
 	protected IServiceContext s;
 
 	private Queue<ModelAction> _actionQueue = new();
+	CancellationTokenSource cts = new();
 
 	public void BindEvents(IEventBus events) {
 		_events = events;
+
+		_events.ConnectTo("RequestSkipAnimation", Callable.From(() => {
+			cts.Cancel();
+		}));
 	}
 
 	public ModelRunner() {}
@@ -60,14 +67,18 @@ public partial class ModelRunner : IActionSource
 		}
 	}
 
-	public void RunQueue(Queue<ModelAction> queue) {	
+	public async void RunQueue(Queue<ModelAction> queue) {	
 		if (queue.Count == 0) return;
 
 		// DebugLogQueue();
 
 		ModelAction action = queue.Dequeue();
-		if (action.CanDo(Model)) {
-			action.Do(Model);
+		cts = new();
+		if (action.CanDo()) {
+			action.Do();
+			action.cts = cts;
+			await Task.Run(action.Show, cts.Token);
+			action.Finish();
 		}
 		RunQueue(queue);
 	}
