@@ -5,6 +5,8 @@ using Jodot.Events;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
+using Godot;
 
 public abstract class ModelAction: IActionSource
 {
@@ -13,6 +15,10 @@ public abstract class ModelAction: IActionSource
 	protected Model model;
 
 	public CancellationTokenSource cts;
+
+	public HashSet<int> SoiledEntities = [];
+
+	public HashSet<int> SoiledComponents = [];
 
 	[Inject("ModelRunner")] protected ModelRunner modelRunner;
 
@@ -27,7 +33,10 @@ public abstract class ModelAction: IActionSource
 		return Task.CompletedTask;
 	}
 
-	public virtual void Finish() {}
+	public virtual void Finish() {
+		SoiledComponents.ToList().ForEach(events.SoilComponent);
+		SoiledEntities.ToList().ForEach(events.SoilItem);
+	}
 
 	public virtual Model Undo(Model model){
 		// TODO

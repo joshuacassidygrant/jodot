@@ -9,7 +9,7 @@ public static class ListExtensions
     {
         if (list.Count == 0) return default;
         RandomNumberGenerator rng = new RandomNumberGenerator();
-        int idx = rng.RandiRange(0, list.Count);
+        int idx = rng.RandiRange(0, list.Count - 1);
         return list[idx];
     }
 
