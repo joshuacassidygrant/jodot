@@ -13,7 +13,7 @@ public partial class ComponentRenderer2D: Node2D, IModelComponentUpdateListener,
     public Node2D Collider;
     public AnimationPlayer Animator;
 
-    public void BindComponent(Component component, IEventBus events) {
+    public virtual void BindComponent(Component component, IEventBus events) {
         Component = component;
         ComponentIndex = component.ComponentIndex;
 
