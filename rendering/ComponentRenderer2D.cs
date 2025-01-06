@@ -18,7 +18,6 @@ public partial class ComponentRenderer2D: Node2D, IModelComponentUpdateListener,
         ComponentIndex = component.ComponentIndex;
 
         IRenderableComponent2D renderableComponent2D = (IRenderableComponent2D)component;
-
         if (renderableComponent2D != null) {
             Renderer = (Node2D)renderableComponent2D.RendererProto?.Duplicate();
             Collider = (Area2D)renderableComponent2D.ColliderProto?.Duplicate();
@@ -29,13 +28,14 @@ public partial class ComponentRenderer2D: Node2D, IModelComponentUpdateListener,
 
                 if (component is IAnimateable2D animateable) {
                     AnimationLibrary animationLibrary = animateable.AnimationLibrary;
-                    if (animationLibrary == null) return;
-                    Sprite2D renderer2d = (Sprite2D)Renderer;
-                    renderer2d.Vframes = animateable.AnimationVFrames;
-                    renderer2d.Hframes = animateable.AnimationHFrames;
-                    Animator = new AnimationPlayer();
-                    Renderer.AddChild(Animator);
-                    Animator.AddAnimationLibrary("GENERIC", animationLibrary);
+                    if (animationLibrary != null) {
+                        Sprite2D renderer2d = (Sprite2D)Renderer;
+                        renderer2d.Vframes = animateable.AnimationVFrames;
+                        renderer2d.Hframes = animateable.AnimationHFrames;
+                        Animator = new AnimationPlayer();
+                        Renderer.AddChild(Animator);
+                        Animator.AddAnimationLibrary("GENERIC", animationLibrary);
+                    }
                 }
             }
 

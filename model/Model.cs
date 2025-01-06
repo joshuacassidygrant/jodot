@@ -100,7 +100,7 @@ public partial class Model: IActionSource
 				Component c2 = resource.GenerateComponent(s);
 				AddComponent(c2, index);
 
-				if (c2 is IRenderableComponent) {
+				if (c2 is IRenderableComponent || c2 is IRenderableComponent2D) {
 					renderable = true;
 				}
 

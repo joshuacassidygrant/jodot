@@ -19,4 +19,8 @@ public static class Vector2IExtensions
     public static float Magnitude(this Vector2I v2i) {
         return Mathf.Sqrt(v2i.X * v2i.X + v2i.Y + v2i.Y);
     }
+
+    public static Vector2 ToVector2(this Vector2I v2i) {
+        return new (v2i.X, v2i.Y);
+    }
 }
