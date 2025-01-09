@@ -68,7 +68,10 @@ public partial class ModelRunner : IActionSource
 	}
 
 	public async void RunQueue(Queue<ModelAction> queue) {	
-		if (queue.Count == 0) return;
+		if (queue.Count == 0) {
+			_events.SoilDeferred();
+			return;
+		}
 
 		// DebugLogQueue();
 

@@ -28,6 +28,8 @@ public partial class Events : Node, IEventBus
 
 	public HashSet<int> DirtyComponents = [];
 	public HashSet<int> DirtyItems = [];
+	public HashSet<int> DirtyComponentsDeferred = [];
+	public HashSet<int> DirtyItemsDeferred = [];
 
 	public Dictionary<int, List<IModelItemUpdateListener>> ItemListeners = [];
 
@@ -72,6 +74,21 @@ public partial class Events : Node, IEventBus
 	public void SoilItem(int index)
 	{
 		DirtyItems.Add(index);
+	}
+
+	public void SoilItemDeferred(int index) {
+		DirtyItemsDeferred.Add(index);
+	}
+
+	public void SoilComponentDeferred(int index) {
+		DirtyComponentsDeferred.Add(index);
+	}
+
+	public void SoilDeferred() {
+		DirtyComponents.UnionWith(DirtyComponentsDeferred);
+		DirtyItems.UnionWith(DirtyItemsDeferred);
+		DirtyComponentsDeferred = [];
+		DirtyItemsDeferred = [];
 	}
 
 	public void WatchModelComponent(int componentIndex, IModelComponentUpdateListener listener)

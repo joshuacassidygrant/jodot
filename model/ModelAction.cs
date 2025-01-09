@@ -34,8 +34,14 @@ public abstract class ModelAction: IActionSource
 	}
 
 	public virtual void Finish() {
-		SoiledComponents.ToList().ForEach(events.SoilComponent);
-		SoiledEntities.ToList().ForEach(events.SoilItem);
+		SoiledComponents.ToList().ForEach(events.SoilComponentDeferred);
+		SoiledEntities.ToList().ForEach(i => {
+			events.SoilItemDeferred(i);
+			if (model.ComponentsByEntity != null) {
+				model.ComponentsByEntity[i].ToList().ForEach(events.SoilComponentDeferred);
+			}
+		});
+
 	}
 
 	public virtual Model Undo(Model model){

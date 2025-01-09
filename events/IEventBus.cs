@@ -14,6 +14,10 @@ public interface IEventBus {
     public void SoilItem(int index);
     public void SoilAll(Model model);
 
+    public void SoilComponentDeferred(int index);
+    public void SoilItemDeferred(int index);
+    public void SoilDeferred();
+
     public void WatchModelComponent(int index, IModelComponentUpdateListener listener);
 
     public void WatchModelItem(int index, IModelItemUpdateListener listener);
