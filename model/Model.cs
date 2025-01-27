@@ -24,6 +24,8 @@ public partial class Model: IActionSource
 	
 	public int[][] ComponentsByEntity = new int[DATA_ARRAY_SIZE_INCREMENT][];
 
+	public int[] EntityToOwner = new int[DATA_ARRAY_SIZE_INCREMENT];
+
 	protected IServiceContext s;
 	protected ModelRunner _modelRunner;
 	protected ModelRendererContainer _modelRendererContainer;
@@ -174,6 +176,7 @@ public partial class Model: IActionSource
 
 		if (entityIndex >= ComponentsByEntity.Length) {
 			Array.Resize(ref ComponentsByEntity, ComponentsByEntity.Length + DATA_ARRAY_SIZE_INCREMENT);
+			Array.Resize(ref EntityToOwner, EntityToOwner.Length + DATA_ARRAY_SIZE_INCREMENT);
 		}
 
 		if (ComponentsByEntity[entityIndex] == null) {
@@ -251,6 +254,7 @@ public partial class Model: IActionSource
 		Godot.Collections.Dictionary<string, Variant> data = new Godot.Collections.Dictionary<string, Variant> {
 			{"NextEntityPointer", NextEntityPointer},
 			{"NextComponentPointer", NextComponentPointer},
+			{"EnitityToOwner", EntityToOwner},
 			{"Components", new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>(Components.Select(item => item?.ExportComponent()).ToArray())},
 			{"Version", Info.Version}
 		};
@@ -268,6 +272,8 @@ public partial class Model: IActionSource
 		
 		// TODO: regenerate freed entity and componetn index lists
 
+		EntityToOwner = (int[])data["EntityToOwner"];
+
 		//Import components
 		Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>> modelItemComponentsSerialized = (Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>)data["Components"];
 		foreach (Godot.Collections.Dictionary<string, Variant> modelItemComponentSerialized in modelItemComponentsSerialized) {
@@ -279,6 +285,7 @@ public partial class Model: IActionSource
 			item.Import(modelItemComponentSerialized);
 			AddImportedComponent(item);
 		};
+
 
 
 		// Build ComponentsByType and ComponentsByEntity
@@ -301,6 +308,14 @@ public partial class Model: IActionSource
 		Components = new Component[Mathf.CeilToInt((float)nextComponentPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT];
 		ComponentsByEntity = new int[Mathf.CeilToInt((float)nextEntityPointer/DATA_ARRAY_SIZE_INCREMENT) * DATA_ARRAY_SIZE_INCREMENT][];
 		ComponentsByType = Enumerable.Range(0, Info.ComponentTypeCount).ToDictionary(t => t, t => new List<Component>()); 
+	}
+
+	public void SetOwner(int entityIndex, int ownerEntityIndex) {
+		EntityToOwner[entityIndex] = ownerEntityIndex;
+	}
+
+	public int GetOwner(int entityIndex) {
+		return EntityToOwner[entityIndex];
 	}
 
 	// DEBUGGING
