@@ -37,7 +37,7 @@ public abstract class ModelAction: IActionSource
 		SoiledComponents.ToList().ForEach(events.SoilComponentDeferred);
 		SoiledEntities.ToList().ForEach(i => {
 			events.SoilItemDeferred(i);
-			if (model.ComponentsByEntity != null) {
+			if (model.ComponentsByEntity != null && model.ComponentsByEntity[i] != null) {
 				model.ComponentsByEntity[i].ToList().ForEach(events.SoilComponentDeferred);
 			}
 		});

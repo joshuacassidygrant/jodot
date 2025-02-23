@@ -5,19 +5,19 @@ using Godot;
 
 public static class ListExtensions
 {
-    public static T PickRandom<T>(this List<T> list)
+    public static T PickRandom<T>(this List<T> list, RandomNumberGenerator rng = null)
     {
         if (list.Count == 0) return default;
-        RandomNumberGenerator rng = new RandomNumberGenerator();
+        rng ??= new RandomNumberGenerator();
         int idx = rng.RandiRange(0, list.Count - 1);
         return list[idx];
     }
 
-    public static List<T> Shuffle<T>(this List<T> list)
+    public static List<T> Shuffle<T>(this List<T> list, RandomNumberGenerator rng = null)
     {
         if (list.Count <= 1) return list;
         
-        RandomNumberGenerator rng = new RandomNumberGenerator();
+        rng ??= new RandomNumberGenerator();
         int n = list.Count;
         while (n > 1)
         {
