@@ -36,6 +36,16 @@ public partial class ModelRendererContainer : Node, IInjectSubject
 		}		
 	}
 
+	public void RemoveRenderer(int modelItemIndex) {
+		IEntityRenderer renderer = GetEntityRenderer(modelItemIndex);
+		if (renderer == null) return;
+		renderer.FreeRenderer();
+		foreach (int componentIndex in _modelRunner.Model.ComponentsByEntity[modelItemIndex]) {
+			ComponentRenderers.Remove(componentIndex);
+		}
+		Renderers.Remove(modelItemIndex);
+	}
+
 	public IEntityRenderer GetEntityRenderer(int key) {
 		if (!Renderers.ContainsKey(key)) return null;
 

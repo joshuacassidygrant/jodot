@@ -53,7 +53,7 @@ public partial class Model: IActionSource
 		BindListeners();
 	}
 
-	public int GenerateEntity(Component[] components) {
+	public int GenerateEntity(Component[] components, bool addRenderer = true) {
 		int index;
 
 		if (FreedEntities.Count > 0) {
@@ -114,7 +114,7 @@ public partial class Model: IActionSource
 			GD.Print($"Missing {defaultComponentsToGenerate.Count} required components on {index}");
 		}
 
-		if (renderable) {
+		if (addRenderer && renderable) {
 			_modelRendererContainer.AddRenderer(index, this, locationProvider);
 		}
 
