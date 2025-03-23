@@ -38,4 +38,8 @@ public partial class ResourceLibrary<C, T>  : IContentLibrary
 		return directory[code];
 	}
 
+	public List<string> List() {
+		return directory.Keys.Select(c => c.ToString()).ToList();
+	}
+
 }
