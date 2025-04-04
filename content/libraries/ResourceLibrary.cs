@@ -3,6 +3,7 @@ namespace Jodot.Content.Libraries;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class ResourceLibrary<C, T>  : IContentLibrary
 	where T : Resource
