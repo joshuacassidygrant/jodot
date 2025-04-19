@@ -12,6 +12,7 @@ public static class NodeExtensions
 	}
 
 	public static void ClearChildren(this Node node) {
+		// TODO: probably need to unbind all bound events!
 		foreach(Node child in node.GetChildren()) {
 			child.QueueFree();
 		}
